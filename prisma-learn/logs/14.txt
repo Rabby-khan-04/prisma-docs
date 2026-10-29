@@ -1,0 +1,26 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."tenant_id" FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["prd_acme_laptop","1","0"]
+prisma:query SELECT "public"."product_tags"."tenant_id", "public"."product_tags"."product_id", "public"."product_tags"."tag_id" FROM "public"."product_tags" WHERE ("public"."product_tags"."tenant_id" = $1 AND "public"."product_tags"."product_id" = $2) OFFSET $3 -- params=["ten_acme","prd_acme_laptop","0"]
+prisma:query SELECT "public"."tags"."id", "public"."tags"."name", "public"."tags"."slug", "public"."tags"."tenant_id" FROM "public"."tags" WHERE ("public"."tags"."id" IN ($1,$2) AND "public"."tags"."tenant_id" IN ($3,$4)) OFFSET $5 -- params=["tag_acme_new","tag_acme_sale","ten_acme","ten_acme","0"]
+explicit ProductTag: {"name":"Trail Laptop 14","tags":[{"tag":{"name":"New","slug":"new"}},{"tag":{"name":"Sale","slug":"sale"}}]}
+prisma:query 
+  SELECT table_name FROM information_schema.tables
+  WHERE table_schema = 'public' AND table_name IN ('product_tags', '_ArticleToLabel')
+  ORDER BY table_name
+ -- params=[]
+join tables: [ '_ArticleToLabel', 'product_tags' ]
+prisma:query SELECT "public"."articles"."id", "public"."articles"."tenant_id", "public"."articles"."title" FROM "public"."articles" WHERE ("public"."articles"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["art_acme_trail","1","0"]
+prisma:query SELECT "public"."labels"."id", "public"."labels"."tenant_id", "public"."labels"."name", "t0"."A" AS "ArticleToLabel@Article" FROM "public"."labels" INNER JOIN "public"."_ArticleToLabel" AS "t0" ON "t0"."B" = "public"."labels"."id" WHERE (1=1 AND "t0"."A" = $1) OFFSET $2 -- params=["art_acme_trail","0"]
+before cross-tenant connect: {"tenantId":"ten_acme","title":"Trail season is here","labels":[{"tenantId":"ten_acme","name":"Outdoors"}]}
+prisma:query SELECT "public"."articles"."id", "public"."articles"."tenant_id", "public"."articles"."title" FROM "public"."articles" WHERE ("public"."articles"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["art_acme_trail","1","0"]
+prisma:query SELECT "public"."labels"."id" FROM "public"."labels" WHERE ("public"."labels"."id" = $1 AND 1=1) OFFSET $2 -- params=["lbl_globex_mobile","0"]
+prisma:query INSERT INTO "public"."_ArticleToLabel" ("A","B") VALUES ($1,$2) ON CONFLICT DO NOTHING -- params=["art_acme_trail","lbl_globex_mobile"]
+prisma:query SELECT "public"."articles"."id", "public"."articles"."tenant_id", "public"."articles"."title" FROM "public"."articles" WHERE "public"."articles"."id" = $1 LIMIT $2 OFFSET $3 -- params=["art_acme_trail","1","0"]
+prisma:query SELECT "public"."labels"."id", "public"."labels"."tenant_id", "public"."labels"."name", "t0"."A" AS "ArticleToLabel@Article" FROM "public"."labels" INNER JOIN "public"."_ArticleToLabel" AS "t0" ON "t0"."B" = "public"."labels"."id" WHERE (1=1 AND "t0"."A" = $1) OFFSET $2 -- params=["art_acme_trail","0"]
+prisma:query COMMIT -- params=[]
+⚠️ after cross-tenant connect: {"tenantId":"ten_acme","title":"Trail season is here","labels":[{"tenantId":"ten_acme","name":"Outdoors"},{"tenantId":"ten_globex","name":"Mobile"}]}
+prisma:query SELECT "public"."articles"."id", "public"."articles"."tenant_id", "public"."articles"."title", "public"."articles"."created_at" FROM "public"."articles" WHERE ("public"."articles"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["art_acme_trail","1","0"]
+prisma:query SELECT "public"."labels"."id", "t0"."A" AS "ArticleToLabel@Article" FROM "public"."labels" INNER JOIN "public"."_ArticleToLabel" AS "t0" ON "t0"."B" = "public"."labels"."id" WHERE ("public"."labels"."id" = $1 AND 1=1 AND "t0"."A" IN ($2)) OFFSET $3 -- params=["lbl_globex_mobile","art_acme_trail","0"]
+prisma:query DELETE FROM "public"."_ArticleToLabel" WHERE ("public"."_ArticleToLabel"."A" = ($1) AND "public"."_ArticleToLabel"."B" IN ($2)) -- params=["art_acme_trail","lbl_globex_mobile"]
+prisma:query SELECT "public"."articles"."id", "public"."articles"."tenant_id", "public"."articles"."title", "public"."articles"."created_at" FROM "public"."articles" WHERE "public"."articles"."id" = $1 LIMIT $2 OFFSET $3 -- params=["art_acme_trail","1","0"]
+prisma:query COMMIT -- params=[]
+cross-tenant link removed

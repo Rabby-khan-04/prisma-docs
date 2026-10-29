@@ -1,0 +1,22 @@
+prisma:query INSERT INTO "public"."categories" ("id","tenant_id","parent_id","name","slug","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."categories"."id" -- params=["cat_ch15_gaming","ten_acme","cat_acme_laptops","Gaming Laptops","gaming-laptops","2026-10-28T05:40:09.005Z","2026-10-28T05:40:09.005Z"]
+prisma:query SELECT "public"."categories"."id", "public"."categories"."name", "public"."categories"."parent_id" FROM "public"."categories" WHERE "public"."categories"."id" = $1 LIMIT $2 OFFSET $3 -- params=["cat_ch15_gaming","1","0"]
+prisma:query SELECT "public"."categories"."id", "public"."categories"."name", "public"."categories"."slug" FROM "public"."categories" WHERE "public"."categories"."id" = $1 OFFSET $2 -- params=["cat_acme_laptops","0"]
+prisma:query COMMIT -- params=[]
+created child: {
+  id: 'cat_ch15_gaming',
+  name: 'Gaming Laptops',
+  parent: { name: 'Laptops', slug: 'laptops' }
+}
+prisma:query SELECT "public"."categories"."id", "public"."categories"."name" FROM "public"."categories" WHERE ("public"."categories"."tenant_id" = $1 AND "public"."categories"."parent_id" IS NULL) OFFSET $2 -- params=["ten_acme","0"]
+prisma:query SELECT "public"."categories"."id", "public"."categories"."name", "public"."categories"."parent_id" FROM "public"."categories" WHERE "public"."categories"."parent_id" IN ($1) OFFSET $2 -- params=["cat_acme_electronics","0"]
+prisma:query SELECT "public"."categories"."id", "public"."categories"."name", "public"."categories"."parent_id" FROM "public"."categories" WHERE "public"."categories"."parent_id" IN ($1,$2) OFFSET $3 -- params=["cat_acme_laptops","cat_acme_accessories","0"]
+[
+  {
+    name: 'Electronics',
+    children: [
+      { name: 'Laptops', children: [ { name: 'Gaming Laptops' } ] },
+      { name: 'Accessories', children: [] }
+    ]
+  }
+]
+prisma:query DELETE FROM "public"."categories" WHERE ("public"."categories"."id" = $1 AND 1=1) RETURNING "public"."categories"."id", "public"."categories"."tenant_id", "public"."categories"."parent_id", "public"."categories"."name", "public"."categories"."slug", "public"."categories"."created_at", "public"."categories"."updated_at" -- params=["cat_ch15_gaming"]

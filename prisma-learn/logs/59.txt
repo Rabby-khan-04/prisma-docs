@@ -1,0 +1,6 @@
+two imports of the singleton are the same object: true
+singleton backend pid: 585
+two ad-hoc clients use different backends: 586 587 true
+getPrisma() twice returns one client: true
+connections in this database while clients are open: 3
+SIGTERM handler registered; singleton stays open for reuse

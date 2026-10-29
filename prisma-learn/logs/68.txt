@@ -1,0 +1,15 @@
+--- two concurrent buyers, conditional update ---
+[
+  { buyer: 'buyer-A', sold: true },
+  { buyer: 'buyer-B', sold: false, reason: 'out of stock' }
+]
+stock after: { stock: 0 }
+--- two concurrent buyers, SELECT ... FOR UPDATE ---
+[
+  { buyer: 'buyer-C', sold: true },
+  { buyer: 'buyer-D', sold: false, reason: 'out of stock' }
+]
+stock after: { stock: 0 }
+idempotent first call: { replayed: false }
+idempotent retry:     { replayed: true }
+stock after retry: { stock: 1 }

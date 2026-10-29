@@ -1,0 +1,63 @@
+--- before ---
+prisma:query 
+  SELECT t.id AS tenant_id,
+    (SELECT count(*) FROM orders o WHERE o.tenant_id = t.id) AS orders,
+    (SELECT count(*) FROM order_items i WHERE i.tenant_id = t.id) AS items,
+    (SELECT count(*) FROM payments p WHERE p.tenant_id = t.id) AS payments
+  FROM tenants t ORDER BY t.id
+ -- params=[]
+┌─────────┬──────────────┬────────┬───────┬──────────┐
+│ (index) │ tenant_id    │ orders │ items │ payments │
+├─────────┼──────────────┼────────┼───────┼──────────┤
+│ 0       │ 'ten_acme'   │ 2n     │ 3n    │ 2n       │
+│ 1       │ 'ten_globex' │ 2n     │ 3n    │ 1n       │
+└─────────┴──────────────┴────────┴───────┴──────────┘
+--- delete ONE ORDER (items/payments cascade) ---
+prisma:query 
+    SELECT o.id AS order_id,
+      (SELECT count(*) FROM order_items i WHERE i.order_id = o.id) AS items,
+      (SELECT count(*) FROM payments p WHERE p.order_id = o.id) AS payments
+    FROM orders o WHERE o.id = 'ord_acme_1002'
+   -- params=[]
+order 1002 before: [ { order_id: 'ord_acme_1002', items: 1n, payments: 1n } ]
+prisma:query DELETE FROM "public"."orders" WHERE ("public"."orders"."id" = $1 AND 1=1) RETURNING "public"."orders"."id", "public"."orders"."tenant_id", "public"."orders"."customer_id", "public"."orders"."number", "public"."orders"."status"::text, "public"."orders"."subtotal_cents", "public"."orders"."discount_cents", "public"."orders"."total_cents", "public"."orders"."currency", "public"."orders"."idempotency_key", "public"."orders"."metadata", "public"."orders"."placed_at", "public"."orders"."created_at", "public"."orders"."updated_at" -- params=["ord_acme_1002"]
+prisma:query 
+    SELECT o.id AS order_id,
+      (SELECT count(*) FROM order_items i WHERE i.order_id = o.id) AS items,
+      (SELECT count(*) FROM payments p WHERE p.order_id = o.id) AS payments
+    FROM orders o WHERE o.id = 'ord_acme_1002'
+   -- params=[]
+order 1002 after: []
+prisma:query ROLLBACK -- params=[]
+prisma:query ROLLBACK -- params=[]
+--- delete CUSTOMER with orders is blocked: P2003
+--- delete TENANT acme (everything cascades) ---
+prisma:query DELETE FROM "public"."tenants" WHERE ("public"."tenants"."id" = $1 AND 1=1) RETURNING "public"."tenants"."id", "public"."tenants"."slug", "public"."tenants"."name", "public"."tenants"."plan"::text, "public"."tenants"."created_at" -- params=["ten_acme"]
+prisma:query 
+    SELECT t.id AS tenant_id,
+      (SELECT count(*) FROM orders o WHERE o.tenant_id = t.id) AS orders,
+      (SELECT count(*) FROM order_items i WHERE i.tenant_id = t.id) AS items,
+      (SELECT count(*) FROM payments p WHERE p.tenant_id = t.id) AS payments
+    FROM tenants t ORDER BY t.id
+   -- params=[]
+prisma:query ROLLBACK -- params=[]
+after tenant delete (inside rollback):
+┌─────────┬──────────────┬────────┬───────┬──────────┐
+│ (index) │ tenant_id    │ orders │ items │ payments │
+├─────────┼──────────────┼────────┼───────┼──────────┤
+│ 0       │ 'ten_globex' │ 2n     │ 3n    │ 1n       │
+└─────────┴──────────────┴────────┴───────┴──────────┘
+--- after rollback (data is intact) ---
+prisma:query 
+  SELECT t.id AS tenant_id,
+    (SELECT count(*) FROM orders o WHERE o.tenant_id = t.id) AS orders,
+    (SELECT count(*) FROM order_items i WHERE i.tenant_id = t.id) AS items,
+    (SELECT count(*) FROM payments p WHERE p.tenant_id = t.id) AS payments
+  FROM tenants t ORDER BY t.id
+ -- params=[]
+┌─────────┬──────────────┬────────┬───────┬──────────┐
+│ (index) │ tenant_id    │ orders │ items │ payments │
+├─────────┼──────────────┼────────┼───────┼──────────┤
+│ 0       │ 'ten_acme'   │ 2n     │ 3n    │ 2n       │
+│ 1       │ 'ten_globex' │ 2n     │ 3n    │ 1n       │
+└─────────┴──────────────┴────────┴───────┴──────────┘

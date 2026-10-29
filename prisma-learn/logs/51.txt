@@ -1,0 +1,32 @@
+--- global queries (admin/reporting only) ---
+all products: 6
+all orders: 4
+all customers: 4
+--- tenant-scoped queries (every request path) ---
+ten_acme { products: 3, orders: 2, customers: 2 }
+ten_globex { products: 3, orders: 2, customers: 2 }
+⚠️ slug lookup without tenant: [
+  {
+    id: 'prd_acme_laptop',
+    tenantId: 'ten_acme',
+    name: 'Trail Laptop 14'
+  },
+  {
+    id: 'prd_globex_laptop',
+    tenantId: 'ten_globex',
+    name: 'Globex Work Laptop'
+  }
+]
+✅ slug lookup with tenant: {
+  id: 'prd_acme_laptop',
+  tenantId: 'ten_acme',
+  name: 'Trail Laptop 14'
+}
+global revenue cents: 368300
+acme revenue cents: 154600
+⚠️ findUnique by id only: {
+  id: 'cus_globex_carol',
+  tenantId: 'ten_globex',
+  email: 'carol@globex.test'
+}
+✅ same id, scoped to acme: null

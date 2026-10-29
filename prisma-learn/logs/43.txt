@@ -1,0 +1,22 @@
+N+1: rows = 2 , SELECT queries = 3
+[
+  {
+    customer: 'Alice Anderson',
+    orders: [ { number: 'ACME-1001', totalCents: 129700 } ]
+  },
+  {
+    customer: 'Bob Brown',
+    orders: [ { number: 'ACME-1002', totalCents: 24900 } ]
+  }
+]
+nested select: rows = 2 , SELECT queries = 2
+[
+  {
+    name: 'Alice Anderson',
+    orders: [ { number: 'ACME-1001', totalCents: 129700 } ]
+  },
+  {
+    name: 'Bob Brown',
+    orders: [ { number: 'ACME-1002', totalCents: 24900 } ]
+  }
+]

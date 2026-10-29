@@ -1,0 +1,20 @@
+--- generator ---
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+--- datasource ---
+datasource db {
+  provider = "postgresql"
+}
+prisma:query 
+  SELECT migration_name, finished_at FROM _prisma_migrations ORDER BY started_at
+ -- params=[]
+--- migrations ---
+┌─────────┬───────────────────────────────────┬──────────────────────────┐
+│ (index) │ migration_name                    │ finished_at              │
+├─────────┼───────────────────────────────────┼──────────────────────────┤
+│ 0       │ '20261028053002_init_setup_check' │ 2026-10-28T05:30:02.562Z │
+│ 1       │ '20261028053632_foundations'      │ 2026-10-28T05:36:32.557Z │
+│ 2       │ '20261028053725_commerce'         │ 2026-10-28T05:37:25.712Z │
+└─────────┴───────────────────────────────────┴──────────────────────────┘

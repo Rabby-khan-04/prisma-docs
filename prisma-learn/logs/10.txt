@@ -1,0 +1,11 @@
+prisma:query 
+  SELECT e.enumlabel
+  FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+  WHERE t.typname = 'OrderStatus'
+  ORDER BY e.enumsortorder
+ -- params=[]
+OrderStatus values: PENDING, PAID, FULFILLED, CANCELLED, REFUNDED
+prisma:query INSERT INTO "public"."orders" ("id","tenant_id","customer_id","number","status","subtotal_cents","discount_cents","total_cents","currency","placed_at","created_at","updated_at") VALUES ($1,$2,$3,$4,CAST($5::text AS "public"."OrderStatus"),$6,$7,$8,$9,$10,$11,$12) RETURNING "public"."orders"."id", "public"."orders"."status"::text -- params=["ord_ch10_enum","ten_acme","cus_acme_alice","CH10-0001","PAID",1000,"0",1000,"USD","2026-10-28T05:39:10.101Z","2026-10-28T05:39:10.101Z","2026-10-28T05:39:10.101Z"]
+created order: { id: 'ord_ch10_enum', status: 'PAID' }
+database rejects unknown enum: P2010
+prisma:query DELETE FROM "public"."orders" WHERE ("public"."orders"."id" = $1 AND 1=1) RETURNING "public"."orders"."id", "public"."orders"."tenant_id", "public"."orders"."customer_id", "public"."orders"."number", "public"."orders"."status"::text, "public"."orders"."subtotal_cents", "public"."orders"."discount_cents", "public"."orders"."total_cents", "public"."orders"."currency", "public"."orders"."idempotency_key", "public"."orders"."metadata", "public"."orders"."placed_at", "public"."orders"."created_at", "public"."orders"."updated_at" -- params=["ord_ch10_enum"]

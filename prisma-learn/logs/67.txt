@@ -1,0 +1,12 @@
+created: {
+  id: 'cmvrp5rrv0000xvohww09wsy5',
+  totalCents: 34700,
+  replayed: false,
+  items: [
+    { sku: 'ACME-MOU-01', qty: 2, line: 9800 },
+    { sku: 'ACME-CHA-01', qty: 1, line: 24900 }
+  ]
+}
+replay: { sameOrder: true, replayed: true }
+out of stock: 409 out of stock: ACME-CHA-01
+cleanup done; stock restored

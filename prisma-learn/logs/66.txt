@@ -1,0 +1,20 @@
+GET 200: 200 {
+  data: [
+    {
+      id: 'prd_acme_laptop',
+      name: 'Trail Laptop 14',
+      priceCents: 129900,
+      stock: 12
+    },
+    {
+      id: 'prd_acme_mouse',
+      name: 'Trail Mouse',
+      priceCents: 4900,
+      stock: 40
+    }
+  ]
+}
+GET without session: 401 { error: 'unauthorized' }
+action on another tenant: 404 { error: 'not found' }
+action with invalid input: 400 { error: 'invalid input' }
+Prisma stays on the server; only DTOs cross the boundary

@@ -1,0 +1,28 @@
+prisma:query SELECT "public"."orders"."id", "public"."orders"."number", "public"."orders"."status"::text, "public"."orders"."total_cents", "public"."orders"."tenant_id", "public"."orders"."customer_id" FROM "public"."orders" WHERE (("public"."orders"."tenant_id" = $1 AND "public"."orders"."id" = $2) AND 1=1) LIMIT $3 OFFSET $4 -- params=["ten_acme","ord_acme_1001","1","0"]
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", "public"."customers"."email", "public"."customers"."tenant_id" FROM "public"."customers" WHERE ("public"."customers"."id" = $1 AND "public"."customers"."tenant_id" = $2) OFFSET $3 -- params=["cus_acme_alice","ten_acme","0"]
+prisma:query SELECT "public"."payments"."id", "public"."payments"."provider", "public"."payments"."status"::text, "public"."payments"."amount_cents", "public"."payments"."tenant_id", "public"."payments"."order_id" FROM "public"."payments" WHERE ("public"."payments"."tenant_id" = $1 AND "public"."payments"."order_id" = $2) OFFSET $3 -- params=["ten_acme","ord_acme_1001","0"]
+prisma:query SELECT "public"."order_items"."id", "public"."order_items"."product_name", "public"."order_items"."quantity", "public"."order_items"."unit_price_cents", "public"."order_items"."line_total_cents", "public"."order_items"."tenant_id", "public"."order_items"."product_id", "public"."order_items"."order_id" FROM "public"."order_items" WHERE ("public"."order_items"."tenant_id" = $1 AND "public"."order_items"."order_id" = $2) ORDER BY "public"."order_items"."line_total_cents" DESC OFFSET $3 -- params=["ten_acme","ord_acme_1001","0"]
+prisma:query SELECT "public"."products"."id", "public"."products"."slug", "public"."products"."stock", "public"."products"."tenant_id" FROM "public"."products" WHERE ("public"."products"."id" IN ($1,$2) AND "public"."products"."tenant_id" IN ($3,$4)) OFFSET $5 -- params=["prd_acme_laptop","prd_acme_mouse","ten_acme","ten_acme","0"]
+{
+  number: 'ACME-1001',
+  status: 'PAID',
+  totalCents: 129700,
+  customer: { name: 'Alice Anderson', email: 'alice@acme.test' },
+  items: [
+    {
+      productName: 'Trail Laptop 14',
+      quantity: 1,
+      unitPriceCents: 129900,
+      lineTotalCents: 129900,
+      product: { slug: 'trail-laptop', stock: 12 }
+    },
+    {
+      productName: 'Trail Mouse',
+      quantity: 2,
+      unitPriceCents: 4900,
+      lineTotalCents: 9800,
+      product: { slug: 'trail-mouse', stock: 40 }
+    }
+  ],
+  payments: [ { provider: 'stripe', status: 'SUCCEEDED', amountCents: 129700 } ]
+}

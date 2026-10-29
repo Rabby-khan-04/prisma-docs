@@ -1,0 +1,5 @@
+Loaded Prisma config from prisma.config.ts.
+
+-- DropTable
+DROP TABLE "drift_demo";
+

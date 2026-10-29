@@ -1,0 +1,13 @@
+--- floating point is not money ---
+0.1 + 0.2 = 0.30000000000000004
+1.1 * 3 = 3.3000000000000003
+(0.1 + 0.2) === 0.3: false
+(1.1 * 3) === 3.3: false
+--- integer cents are exact ---
+{ unitPriceCents: 1999, quantity: 3, subtotalCents: 5997 }
+{ subtotalCents: 5997, discountCents: 900, totalCents: 5097 }
+formatted: $50.97
+is 19.995 an integer number of cents? false
+rejected: cents must be an integer
+orders.total_cents type: integer
+stored order: { subtotalCents: 139700, discountCents: 10000, totalCents: 129700 } consistent: true

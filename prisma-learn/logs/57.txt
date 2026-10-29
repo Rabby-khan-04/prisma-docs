@@ -1,0 +1,13 @@
+--- as the table owner (postgres bypasses RLS) ---
+owner sees: { customers: 4, products: 6, orders: 4 }
+--- as rls_app with no app.tenant_id ---
+no tenant set: { customers: 0, products: 0, orders: 0 }
+--- as rls_app with app.tenant_id ---
+ten_acme: { customers: 2, products: 3, orders: 2 }
+ten_globex: { customers: 2, products: 3, orders: 2 }
+--- cross-tenant UPDATE is filtered to zero rows ---
+rows updated while acting as globex: 0
+--- cross-tenant INSERT is rejected by WITH CHECK ---
+insert rejected: P2010
+--- owner still sees the untouched truth ---
+acme customer names: [ { name: 'Alice Anderson' }, { name: 'Bob Brown' } ]

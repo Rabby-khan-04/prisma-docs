@@ -1,0 +1,8 @@
+concurrent redemptions: [
+  { ok: true, couponId: 'cpn_ch70', pointsSpent: 10 },
+  { ok: false, error: 'coupon limit reached' }
+]
+coupon counter: { redemptionCount: 1, maxRedemptions: 1 }
+duplicate redemption: P2002
+negative balance blocked: true 10 10
+cleanup done

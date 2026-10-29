@@ -1,0 +1,18 @@
+session TimeZone: Etc/UTC
+order timestamp columns: [
+  { column_name: 'created_at', data_type: 'timestamp with time zone' },
+  { column_name: 'placed_at', data_type: 'timestamp with time zone' }
+]
+round-trip equal: true 2026-03-08T07:30:00.000Z
+zoned views: {
+  ny: '2026-03-08 03:30',
+  tokyo: '2026-03-08 16:30',
+  epoch: '1772955000.000000'
+}
+NY day in UTC: {
+  start_utc: '2026-03-08 05:00:00+00',
+  end_utc: '2026-03-09 04:00:00+00'
+}
+orders in that NY day (tenant acme): 1
+birthday before: null
+date-only stored as: 1990-05-15

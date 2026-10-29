@@ -1,0 +1,24 @@
+ProductCard: {
+  id: 'prd_acme_laptop',
+  name: 'Trail Laptop 14',
+  priceCents: 129900,
+  rating: 4.7
+}
+CustomerWithOrders: Alice Anderson [ { number: 'ACME-1001', totalCents: 129700 } ]
+PublicProduct: { id: 'prd_acme_laptop', name: 'Trail Laptop 14', price: '1299.00' }
+filter type works: 3
+listCards: [
+  {
+    id: 'prd_globex_laptop',
+    name: 'Globex Work Laptop',
+    priceCents: 119900,
+    rating: 4.1
+  },
+  {
+    id: 'prd_globex_headset',
+    name: 'Orbit Headset',
+    priceCents: 15900,
+    rating: null
+  }
+]
+generated client version: 7.10.1

@@ -1,0 +1,31 @@
+--- tenant-scoped unique constraints and composite FKs ---
+customer_profiles | customer_profiles_pkey | PRIMARY KEY (id)
+customer_profiles | customer_profiles_tenant_id_customer_id_fkey | FOREIGN KEY (tenant_id, customer_id) REFERENCES customers(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+customer_profiles | customer_profiles_tenant_id_fkey | FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items | order_items_pkey | PRIMARY KEY (id)
+order_items | order_items_tenant_id_fkey | FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items | order_items_tenant_id_order_id_fkey | FOREIGN KEY (tenant_id, order_id) REFERENCES orders(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items | order_items_tenant_id_product_id_fkey | FOREIGN KEY (tenant_id, product_id) REFERENCES products(tenant_id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+orders | orders_pkey | PRIMARY KEY (id)
+orders | orders_tenant_id_customer_id_fkey | FOREIGN KEY (tenant_id, customer_id) REFERENCES customers(tenant_id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+orders | orders_tenant_id_fkey | FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+products | products_pkey | PRIMARY KEY (id)
+products | products_tenant_id_category_id_fkey | FOREIGN KEY (tenant_id, category_id) REFERENCES categories(tenant_id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+products | products_tenant_id_fkey | FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+product_tags | product_tags_pkey | PRIMARY KEY (tenant_id, product_id, tag_id)
+product_tags | product_tags_tenant_id_fkey | FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+product_tags | product_tags_tenant_id_product_id_fkey | FOREIGN KEY (tenant_id, product_id) REFERENCES products(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+product_tags | product_tags_tenant_id_tag_id_fkey | FOREIGN KEY (tenant_id, tag_id) REFERENCES tags(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+same slug across tenants: [
+  { id: 'prd_acme_laptop', tenantId: 'ten_acme', slug: 'trail-laptop' },
+  {
+    id: 'prd_globex_laptop',
+    tenantId: 'ten_globex',
+    slug: 'trail-laptop'
+  }
+]
+cross-tenant order rejected: P2010
+Raw query failed. Code: `23503`. Message: `insert or update on table "orders" violates foreign key constraint "orders_tenant_id_customer_id_fkey"`
+cross-tenant order item rejected: P2003
+cross-tenant product tag rejected: P2003
+resolved inside tenant: { product: { id: 'prd_acme_mouse' }, tag: { id: 'tag_acme_new' } }

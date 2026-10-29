@@ -1,0 +1,74 @@
+acme products: [
+  {
+    id: 'prd_acme_chair',
+    name: 'Camp Chair',
+    slug: 'camp-chair',
+    priceCents: 24900,
+    stock: 5
+  },
+  {
+    id: 'prd_acme_laptop',
+    name: 'Trail Laptop 14',
+    slug: 'trail-laptop',
+    priceCents: 129900,
+    stock: 12
+  },
+  {
+    id: 'prd_acme_mouse',
+    name: 'Trail Mouse',
+    slug: 'trail-mouse',
+    priceCents: 4900,
+    stock: 40
+  }
+]
+globex products: [
+  {
+    id: 'prd_globex_laptop',
+    name: 'Globex Work Laptop',
+    slug: 'trail-laptop',
+    priceCents: 119900,
+    stock: 7
+  },
+  {
+    id: 'prd_globex_headset',
+    name: 'Orbit Headset',
+    slug: 'orbit-headset',
+    priceCents: 15900,
+    stock: 0
+  },
+  {
+    id: 'prd_globex_phone',
+    name: 'Orbit Phone',
+    slug: 'orbit-phone',
+    priceCents: 79900,
+    stock: 20
+  }
+]
+acme reading globex product: TenantResourceNotFoundError - product not found in this tenant
+acme updating globex product: true
+created in acme: {
+  id: 'cmvrp1qup00007foh5y9d4jfa',
+  tenantId: 'ten_acme',
+  name: 'Repository Product',
+  priceCents: 1234
+}
+globex reading acme product: TenantResourceNotFoundError
+acme revenue by customer: [
+  {
+    _sum: { totalCents: 129700 },
+    _count: { _all: 1 },
+    customerId: 'cus_acme_alice'
+  },
+  {
+    _sum: { totalCents: 24900 },
+    _count: { _all: 1 },
+    customerId: 'cus_acme_bob'
+  }
+]
+globex revenue by customer: [
+  {
+    _sum: { totalCents: 93800 },
+    _count: { _all: 1 },
+    customerId: 'cus_globex_carol'
+  }
+]

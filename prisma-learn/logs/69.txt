@@ -1,0 +1,32 @@
+page 1: [
+  { id: 'cus_ch69_01', name: 'Search User 01', tenantId: 'ten_acme' },
+  { id: 'cus_ch69_03', name: 'Search User 03', tenantId: 'ten_acme' },
+  { id: 'cus_ch69_05', name: 'Search User 05', tenantId: 'ten_acme' }
+]
+page 2: [
+  { id: 'cus_ch69_07', name: 'Search User 07', tenantId: 'ten_acme' },
+  { id: 'cus_ch69_09', name: 'Search User 09', tenantId: 'ten_acme' },
+  { id: 'cus_ch69_11', name: 'Search User 11', tenantId: 'ten_acme' }
+]
+total matching in acme: 6
+every row is acme: true
+--- search plan ---
+Limit  (cost=14.51..14.52 rows=1 width=27) (actual time=0.031..0.032 rows=3 loops=1)
+  Buffers: shared hit=1
+  ->  Sort  (cost=14.51..14.52 rows=1 width=27) (actual time=0.030..0.030 rows=3 loops=1)
+        Sort Key: name, id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=1
+        ->  Seq Scan on customers  (cost=0.00..14.50 rows=1 width=27) (actual time=0.015..0.022 rows=6 loops=1)
+              Filter: ((deleted_at IS NULL) AND ((name)::text ~~* '%Search User%'::text) AND ((tenant_id)::text = 'ten_acme'::text))
+              Rows Removed by Filter: 10
+              Buffers: shared hit=1
+Planning Time: 0.088 ms
+Execution Time: 0.043 ms
+customer indexes:
+- CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (id)
+- CREATE INDEX customers_tenant_id_created_at_idx ON public.customers USING btree (tenant_id, created_at)
+- CREATE UNIQUE INDEX customers_tenant_id_email_key ON public.customers USING btree (tenant_id, email)
+- CREATE UNIQUE INDEX customers_tenant_id_id_key ON public.customers USING btree (tenant_id, id)
+- CREATE INDEX customers_tenant_id_name_idx ON public.customers USING btree (tenant_id, name)
+cleanup done

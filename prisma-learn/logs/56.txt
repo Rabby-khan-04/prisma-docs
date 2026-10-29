@@ -1,0 +1,12 @@
+PASS read: scoped findMany never returns another tenant
+PASS read: findUnique by foreign id returns null
+PASS update: cross-tenant price change is rejected by the repository
+PASS delete: cross-tenant soft delete is rejected
+PASS aggregate: scoped totals are smaller than global totals
+PASS nested write: an app guard rejects a cross-tenant label
+PASS create: repository input cannot choose the tenant
+  note: raw SQL needs PostgreSQL RLS (chapter 57) or code review
+PASS raw SQL: extension is not a security boundary
+PASS repository: each tenant sees only its own customers
+
+9 isolation checks passed.

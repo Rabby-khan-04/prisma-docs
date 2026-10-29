@@ -1,0 +1,22 @@
+--- tenant_id + active + created_at (index-friendly) ---
+Limit  (cost=0.14..8.16 rows=1 width=86) (actual time=0.031..0.033 rows=3 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan Backward using products_tenant_id_active_created_at_idx on products  (cost=0.14..8.16 rows=1 width=86) (actual time=0.030..0.032 rows=3 loops=1)
+        Index Cond: (((tenant_id)::text = 'ten_acme'::text) AND (active = true))
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=199
+Planning Time: 0.584 ms
+Execution Time: 0.057 ms
+--- active only (index prefix missing) ---
+Limit  (cost=11.46..11.48 rows=10 width=86) (actual time=0.035..0.036 rows=6 loops=1)
+  Buffers: shared hit=4
+  ->  Sort  (cost=11.46..11.54 rows=35 width=86) (actual time=0.034..0.035 rows=6 loops=1)
+        Sort Key: created_at DESC
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=4
+        ->  Seq Scan on products  (cost=0.00..10.70 rows=35 width=86) (actual time=0.006..0.008 rows=6 loops=1)
+              Filter: active
+              Buffers: shared hit=1
+Planning Time: 0.061 ms
+Execution Time: 0.046 ms

@@ -1,0 +1,26 @@
+┌─────────┬─────────────────────┬────────────────────────────────────────────────┬─────────────┬─────────────┐
+│ (index) │ table_name          │ constraint_name                                │ delete_rule │ update_rule │
+├─────────┼─────────────────────┼────────────────────────────────────────────────┼─────────────┼─────────────┤
+│ 0       │ 'categories'        │ 'categories_parent_id_fkey'                    │ 'SET NULL'  │ 'CASCADE'   │
+│ 1       │ 'categories'        │ 'categories_tenant_id_fkey'                    │ 'CASCADE'   │ 'CASCADE'   │
+│ 2       │ 'customer_profiles' │ 'customer_profiles_tenant_id_customer_id_fkey' │ 'CASCADE'   │ 'CASCADE'   │
+│ 3       │ 'customer_profiles' │ 'customer_profiles_tenant_id_fkey'             │ 'CASCADE'   │ 'CASCADE'   │
+│ 4       │ 'order_items'       │ 'order_items_tenant_id_fkey'                   │ 'CASCADE'   │ 'CASCADE'   │
+│ 5       │ 'order_items'       │ 'order_items_tenant_id_order_id_fkey'          │ 'CASCADE'   │ 'CASCADE'   │
+│ 6       │ 'order_items'       │ 'order_items_tenant_id_product_id_fkey'        │ 'RESTRICT'  │ 'CASCADE'   │
+│ 7       │ 'orders'            │ 'orders_tenant_id_customer_id_fkey'            │ 'RESTRICT'  │ 'CASCADE'   │
+│ 8       │ 'orders'            │ 'orders_tenant_id_fkey'                        │ 'CASCADE'   │ 'CASCADE'   │
+│ 9       │ 'payments'          │ 'payments_tenant_id_fkey'                      │ 'CASCADE'   │ 'CASCADE'   │
+│ 10      │ 'payments'          │ 'payments_tenant_id_order_id_fkey'             │ 'CASCADE'   │ 'CASCADE'   │
+└─────────┴─────────────────────┴────────────────────────────────────────────────┴─────────────┴─────────────┘
+categories_parent_id_fkey: FOREIGN KEY (parent_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL
+categories_tenant_id_fkey: FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+customer_profiles_tenant_id_customer_id_fkey: FOREIGN KEY (tenant_id, customer_id) REFERENCES customers(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+customer_profiles_tenant_id_fkey: FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items_tenant_id_fkey: FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items_tenant_id_order_id_fkey: FOREIGN KEY (tenant_id, order_id) REFERENCES orders(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE
+order_items_tenant_id_product_id_fkey: FOREIGN KEY (tenant_id, product_id) REFERENCES products(tenant_id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+orders_tenant_id_customer_id_fkey: FOREIGN KEY (tenant_id, customer_id) REFERENCES customers(tenant_id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+orders_tenant_id_fkey: FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+payments_tenant_id_fkey: FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE CASCADE ON DELETE CASCADE
+payments_tenant_id_order_id_fkey: FOREIGN KEY (tenant_id, order_id) REFERENCES orders(tenant_id, id) ON UPDATE CASCADE ON DELETE CASCADE

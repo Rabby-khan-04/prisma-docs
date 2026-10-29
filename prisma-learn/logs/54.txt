@@ -1,0 +1,18 @@
+acme product count: 3
+globex product count: 3
+acme products: [
+  { name: 'Trail Laptop 14', tenantId: 'ten_acme' },
+  { name: 'Trail Mouse', tenantId: 'ten_acme' },
+  { name: 'Camp Chair', tenantId: 'ten_acme' }
+]
+acme findUnique globex id: null
+globex findUnique same id: { name: 'Orbit Phone', tenantId: 'ten_globex' }
+acme aggregate: { _sum: { totalCents: 154600 }, _count: { _all: 2 } }
+acme updateMany globex id count: 0
+created through acme extension: {
+  id: 'cmvrp1rgx00008uoht0tx99ul',
+  tenantId: 'ten_acme',
+  name: 'Extension Product'
+}
+⚠️ raw SQL through the acme extension sees: [ 'ten_acme', 'ten_globex' ]
+admin sees all products: 7

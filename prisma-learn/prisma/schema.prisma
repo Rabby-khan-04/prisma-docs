@@ -1,0 +1,417 @@
+// Prisma schema for the `prisma_learn` throwaway database.
+// Datasource URL: prisma.config.ts (Prisma 7). Never points anywhere but localhost:5433/prisma_learn.
+//
+// This file is built in stages:
+//   migration 002_foundations -> Tenant, User, Customer, CustomerProfile, Category, Product
+//   migration 003_commerce    -> tags, orders, items, payments, coupons, loyalty, fraud, implicit M2M
+// Later migrations add tier/displayName, then RLS.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum TenantPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  SUPPORT
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+enum FraudAction {
+  BAN
+  UNBAN
+}
+
+// ---------------------------------------------------------------------------
+// Foundations
+// ---------------------------------------------------------------------------
+
+model Tenant {
+  id        String     @id @db.VarChar(30)
+  slug      String     @unique @db.VarChar(50)
+  name      String     @db.VarChar(120)
+  plan      TenantPlan @default(FREE)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  users             User[]
+  customers         Customer[]
+  customerProfiles  CustomerProfile[]
+  categories        Category[]
+  products          Product[]
+  tags              Tag[]
+  orders            Order[]
+  payments          Payment[]
+  coupons           Coupon[]
+  couponRedemptions CouponRedemption[]
+  loyaltyLedger     LoyaltyLedger[]
+  fraudEvents       FraudEvent[]
+  articles          Article[]
+  labels            Label[]
+  productTags       ProductTag[]
+  orderItems        OrderItem[]
+
+  @@map("tenants")
+}
+
+model User {
+  id           String   @id @default(cuid()) @db.VarChar(30)
+  tenantId     String   @map("tenant_id") @db.VarChar(30)
+  email        String   @db.VarChar(254)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         UserRole @default(SUPPORT)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, email])
+  @@unique([tenantId, id])
+  @@index([tenantId, role])
+  @@map("users")
+}
+
+model Customer {
+  id            String    @id @default(cuid()) @db.VarChar(30)
+  tenantId      String    @map("tenant_id") @db.VarChar(30)
+  email         String    @db.VarChar(254)
+  name          String    @db.VarChar(120)
+  displayName   String    @map("display_name") @db.VarChar(120)
+  phone         String?   @db.VarChar(30)
+  loyaltyPoints Int       @default(0) @map("loyalty_points")
+  tier          String    @default("BRONZE") @db.VarChar(20)
+  bannedAt      DateTime? @map("banned_at") @db.Timestamptz(3)
+  banReason     String?   @map("ban_reason") @db.Text
+  notes         String?   @db.Text
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(3)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  profile           CustomerProfile?
+  orders            Order[]
+  couponRedemptions CouponRedemption[]
+  loyaltyEntries    LoyaltyLedger[]
+  fraudEvents       FraudEvent[]
+
+  @@unique([tenantId, email])
+  @@unique([tenantId, id])
+  @@index([tenantId, name])
+  @@index([tenantId, createdAt])
+  @@map("customers")
+}
+
+model CustomerProfile {
+  id             String    @id @default(cuid()) @db.VarChar(30)
+  tenantId       String    @map("tenant_id") @db.VarChar(30)
+  customerId     String    @map("customer_id") @db.VarChar(30)
+  avatarUrl      String?   @map("avatar_url") @db.VarChar(500)
+  birthday       DateTime? @db.Date
+  marketingOptIn Boolean   @default(false) @map("marketing_opt_in")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, customerId])
+  @@index([tenantId])
+  @@map("customer_profiles")
+}
+
+model Category {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  tenantId  String   @map("tenant_id") @db.VarChar(30)
+  parentId  String?  @map("parent_id") @db.VarChar(30)
+  name      String   @db.VarChar(120)
+  slug      String   @db.VarChar(80)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant   Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+
+  @@unique([tenantId, slug])
+  @@unique([tenantId, id])
+  @@index([tenantId, parentId])
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(cuid()) @db.VarChar(30)
+  tenantId    String    @map("tenant_id") @db.VarChar(30)
+  categoryId  String?   @map("category_id") @db.VarChar(30)
+  sku         String    @db.VarChar(40)
+  slug        String    @db.VarChar(80)
+  name        String    @db.VarChar(200)
+  description String?   @db.Text
+  priceCents  Int       @map("price_cents")
+  stock       Int       @default(0)
+  active      Boolean   @default(true)
+  rating      Decimal?  @db.Decimal(3, 2)
+  viewCount   BigInt    @default(0) @map("view_count")
+  metadata    Json?     @db.JsonB
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category   Category?    @relation(fields: [tenantId, categoryId], references: [tenantId, id], onDelete: Restrict)
+  orderItems OrderItem[]
+  tags       ProductTag[]
+
+  @@unique([tenantId, slug])
+  @@unique([tenantId, sku])
+  @@unique([tenantId, id])
+  @@index([tenantId, active, createdAt])
+  @@index([tenantId, categoryId])
+  @@map("products")
+}
+
+// ---------------------------------------------------------------------------
+// Commerce: catalog tags, orders, payments, coupons, loyalty, fraud
+// ---------------------------------------------------------------------------
+
+model Tag {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  tenantId  String   @map("tenant_id") @db.VarChar(30)
+  name      String   @db.VarChar(60)
+  slug      String   @db.VarChar(60)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant   Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  products ProductTag[]
+
+  @@unique([tenantId, slug])
+  @@unique([tenantId, id])
+  @@index([tenantId])
+  @@map("tags")
+}
+
+// Explicit many-to-many join table: tenantId is part of the primary key,
+// so a cross-tenant link cannot be represented.
+model ProductTag {
+  tenantId  String   @map("tenant_id") @db.VarChar(30)
+  productId String   @map("product_id") @db.VarChar(30)
+  tagId     String   @map("tag_id") @db.VarChar(30)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tenantId, tagId], references: [tenantId, id], onDelete: Cascade)
+
+  @@id([tenantId, productId, tagId])
+  @@index([tenantId, tagId])
+  @@map("product_tags")
+}
+
+model Order {
+  id             String      @id @default(cuid()) @db.VarChar(30)
+  tenantId       String      @map("tenant_id") @db.VarChar(30)
+  customerId     String      @map("customer_id") @db.VarChar(30)
+  number         String      @db.VarChar(30)
+  status         OrderStatus @default(PENDING)
+  subtotalCents  Int         @map("subtotal_cents")
+  discountCents  Int         @default(0) @map("discount_cents")
+  totalCents     Int         @map("total_cents")
+  currency       String      @default("USD") @db.Char(3)
+  idempotencyKey String?     @map("idempotency_key") @db.VarChar(100)
+  metadata       Json?       @db.JsonB
+  placedAt       DateTime    @default(now()) @map("placed_at") @db.Timestamptz(3)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer          Customer           @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict)
+  items             OrderItem[]
+  payments          Payment[]
+  couponRedemptions CouponRedemption[]
+  loyaltyEntries    LoyaltyLedger[]
+
+  @@unique([tenantId, number])
+  @@unique([tenantId, idempotencyKey])
+  @@unique([tenantId, id])
+  @@index([tenantId, customerId, placedAt])
+  @@index([tenantId, status, placedAt])
+  @@map("orders")
+}
+
+// Snapshot columns (productName, sku, unitPriceCents) keep history immutable
+// even if the live product is renamed, repriced, or deleted.
+model OrderItem {
+  id             String   @id @default(cuid()) @db.VarChar(30)
+  tenantId       String   @map("tenant_id") @db.VarChar(30)
+  orderId        String   @map("order_id") @db.VarChar(30)
+  productId      String   @map("product_id") @db.VarChar(30)
+  productName    String   @map("product_name") @db.VarChar(200)
+  sku            String   @db.VarChar(40)
+  unitPriceCents Int      @map("unit_price_cents")
+  quantity       Int
+  lineTotalCents Int      @map("line_total_cents")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order   Order   @relation(fields: [tenantId, orderId], references: [tenantId, id], onDelete: Cascade)
+  product Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, orderId])
+  @@index([tenantId, productId])
+  @@map("order_items")
+}
+
+model Payment {
+  id          String        @id @default(cuid()) @db.VarChar(30)
+  tenantId    String        @map("tenant_id") @db.VarChar(30)
+  orderId     String        @map("order_id") @db.VarChar(30)
+  provider    String        @db.VarChar(40)
+  providerRef String        @map("provider_ref") @db.VarChar(100)
+  amountCents Int           @map("amount_cents")
+  status      PaymentStatus @default(PENDING)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order  Order  @relation(fields: [tenantId, orderId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, provider, providerRef])
+  @@index([tenantId, orderId])
+  @@map("payments")
+}
+
+model Coupon {
+  id              String     @id @default(cuid()) @db.VarChar(30)
+  tenantId        String     @map("tenant_id") @db.VarChar(30)
+  code            String     @db.VarChar(40)
+  type            CouponType
+  percentOff      Int?       @map("percent_off")
+  amountOffCents  Int?       @map("amount_off_cents")
+  minOrderCents   Int        @default(0) @map("min_order_cents")
+  maxRedemptions  Int?       @map("max_redemptions")
+  redemptionCount Int        @default(0) @map("redemption_count")
+  active          Boolean    @default(true)
+  expiresAt       DateTime?  @map("expires_at") @db.Timestamptz(3)
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  redemptions CouponRedemption[]
+
+  @@unique([tenantId, code])
+  @@unique([tenantId, id])
+  @@index([tenantId, active])
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id         String   @id @default(cuid()) @db.VarChar(30)
+  tenantId   String   @map("tenant_id") @db.VarChar(30)
+  couponId   String   @map("coupon_id") @db.VarChar(30)
+  customerId String   @map("customer_id") @db.VarChar(30)
+  orderId    String   @map("order_id") @db.VarChar(30)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  coupon   Coupon   @relation(fields: [tenantId, couponId], references: [tenantId, id], onDelete: Restrict)
+  customer Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict)
+  order    Order    @relation(fields: [tenantId, orderId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, couponId, customerId])
+  @@index([tenantId, orderId])
+  @@map("coupon_redemptions")
+}
+
+model LoyaltyLedger {
+  id         String   @id @default(cuid()) @db.VarChar(30)
+  tenantId   String   @map("tenant_id") @db.VarChar(30)
+  customerId String   @map("customer_id") @db.VarChar(30)
+  orderId    String?  @map("order_id") @db.VarChar(30)
+  delta      Int
+  reason     String   @db.VarChar(80)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict)
+  order    Order?   @relation(fields: [tenantId, orderId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, customerId, createdAt])
+  @@map("loyalty_ledger")
+}
+
+model FraudEvent {
+  id         String      @id @default(cuid()) @db.VarChar(30)
+  tenantId   String      @map("tenant_id") @db.VarChar(30)
+  customerId String      @map("customer_id") @db.VarChar(30)
+  action     FraudAction
+  reason     String      @db.VarChar(200)
+  actorId    String?     @map("actor_id") @db.VarChar(30)
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, customerId, createdAt])
+  @@map("fraud_events")
+}
+
+// Implicit many-to-many demo. The join table is managed by Prisma and has
+// only article_id/label_id - it cannot carry tenantId. See chapter 14/55b.
+model Article {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  tenantId  String   @map("tenant_id") @db.VarChar(30)
+  title     String   @db.VarChar(200)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  labels Label[]
+
+  @@index([tenantId])
+  @@map("articles")
+}
+
+model Label {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  tenantId  String   @map("tenant_id") @db.VarChar(30)
+  name      String   @db.VarChar(60)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  articles Article[]
+
+  @@index([tenantId])
+  @@map("labels")
+}

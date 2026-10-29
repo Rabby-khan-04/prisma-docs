@@ -1,0 +1,25 @@
+prisma:query INSERT INTO "public"."customer_profiles" ("id","tenant_id","customer_id","avatar_url","marketing_opt_in","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."customer_profiles"."id", "public"."customer_profiles"."tenant_id", "public"."customer_profiles"."customer_id", "public"."customer_profiles"."avatar_url", "public"."customer_profiles"."birthday", "public"."customer_profiles"."marketing_opt_in", "public"."customer_profiles"."created_at", "public"."customer_profiles"."updated_at" -- params=["prf_ch12_bob","ten_acme","cus_acme_bob","https://example.test/bob.png",true,"2026-10-28T05:40:06.619Z","2026-10-28T05:40:06.619Z"]
+profile: {
+  id: 'prf_ch12_bob',
+  tenantId: 'ten_acme',
+  customerId: 'cus_acme_bob',
+  avatarUrl: 'https://example.test/bob.png',
+  birthday: null,
+  marketingOptIn: true,
+  createdAt: 2026-10-28T05:40:06.619Z,
+  updatedAt: 2026-10-28T05:40:06.619Z
+}
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", "public"."customers"."tenant_id" FROM "public"."customers" WHERE ("public"."customers"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["cus_acme_bob","1","0"]
+prisma:query SELECT "public"."customer_profiles"."id", "public"."customer_profiles"."avatar_url", "public"."customer_profiles"."marketing_opt_in", "public"."customer_profiles"."tenant_id", "public"."customer_profiles"."customer_id" FROM "public"."customer_profiles" WHERE ("public"."customer_profiles"."tenant_id" = $1 AND "public"."customer_profiles"."customer_id" = $2) OFFSET $3 -- params=["ten_acme","cus_acme_bob","0"]
+customer -> profile: {
+  id: 'cus_acme_bob',
+  name: 'Bob Brown',
+  profile: { avatarUrl: 'https://example.test/bob.png', marketingOptIn: true }
+}
+prisma:query SELECT "public"."customer_profiles"."id", "public"."customer_profiles"."tenant_id", "public"."customer_profiles"."customer_id" FROM "public"."customer_profiles" WHERE (("public"."customer_profiles"."tenant_id" = $1 AND "public"."customer_profiles"."customer_id" = $2) AND 1=1) LIMIT $3 OFFSET $4 -- params=["ten_acme","cus_acme_bob","1","0"]
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", "public"."customers"."email", "public"."customers"."tenant_id" FROM "public"."customers" WHERE ("public"."customers"."id" = $1 AND "public"."customers"."tenant_id" = $2) OFFSET $3 -- params=["cus_acme_bob","ten_acme","0"]
+profile -> customer: {
+  id: 'prf_ch12_bob',
+  customer: { name: 'Bob Brown', email: 'bob@acme.test' }
+}
+prisma:query DELETE FROM "public"."customer_profiles" WHERE ("public"."customer_profiles"."id" = $1 AND 1=1) RETURNING "public"."customer_profiles"."id", "public"."customer_profiles"."tenant_id", "public"."customer_profiles"."customer_id", "public"."customer_profiles"."avatar_url", "public"."customer_profiles"."birthday", "public"."customer_profiles"."marketing_opt_in", "public"."customer_profiles"."created_at", "public"."customer_profiles"."updated_at" -- params=["prf_ch12_bob"]

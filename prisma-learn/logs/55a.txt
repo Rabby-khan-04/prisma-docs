@@ -1,0 +1,23 @@
+--- ⚠️ read: findUnique by id only ---
+Acme session read a Globex order: {
+  id: 'ord_globex_2001',
+  tenantId: 'ten_globex',
+  number: 'GLX-2001',
+  totalCents: 93800,
+  customerId: 'cus_globex_carol'
+}
+--- ⚠️ update: id only, no tenantId ---
+Globex product changed by an Acme session: {
+  before: { tenantId: 'ten_globex', name: 'Orbit Phone', priceCents: 79900 },
+  after: { tenantId: 'ten_globex', name: 'Orbit Phone', priceCents: 1 }
+}
+--- ⚠️ delete: id only, no tenantId ---
+Globex fraud audit rows deleted by an Acme session: 1
+--- ⚠️ updateMany: no tenant filter ---
+products deactivated across BOTH tenants: 6
+--- ⚠️ deleteMany: no tenant filter ---
+product-tag links deleted across BOTH tenants: 4
+--- after rollback: production data is unchanged ---
+globex phone price: { priceCents: 79900, active: true }
+fraud audit rows: 1
+product-tag links: 4

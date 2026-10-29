@@ -1,0 +1,40 @@
+--- before the live product changes ---
+{
+  productName: 'Trail Laptop 14',
+  sku: 'ACME-LAP-01',
+  unitPriceCents: 129900,
+  quantity: 1,
+  lineTotalCents: 129900,
+  product: { name: 'Trail Laptop 14', sku: 'ACME-LAP-01', priceCents: 129900 }
+}
+--- inside the change (rolled back afterwards) ---
+order snapshot vs live product: {
+  productName: 'Trail Laptop 14',
+  sku: 'ACME-LAP-01',
+  unitPriceCents: 129900,
+  lineTotalCents: 129900,
+  product: { name: 'Renamed After The Sale', priceCents: 999999 }
+}
+fraud audit rows: [
+  {
+    action: 'UNBAN',
+    reason: 'False positive after manual review',
+    actorId: 'usr_globex_admin',
+    createdAt: 2026-10-28T05:46:39.543Z
+  }
+]
+loyalty audit rows: [
+  {
+    delta: 129,
+    reason: 'order_earn',
+    orderId: 'ord_acme_1001',
+    createdAt: 2026-10-28T05:46:39.532Z
+  },
+  {
+    delta: -9,
+    reason: 'coupon_redeem',
+    orderId: null,
+    createdAt: 2026-10-28T05:46:39.536Z
+  }
+]
+audit rows are insert-only by convention and by code review

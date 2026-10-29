@@ -1,0 +1,12 @@
+prisma:query 
+  SELECT current_database(), version()
+ -- params=[]
+database: prisma_learn
+server: PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+prisma:query 
+  SELECT table_name
+  FROM information_schema.tables
+  WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+  ORDER BY table_name
+ -- params=[]
+tables: _ArticleToLabel, _prisma_migrations, articles, categories, coupon_redemptions, coupons, customer_profiles, customers, fraud_events, labels, loyalty_ledger, order_items, orders, payments, product_tags, products, tags, tenants, users

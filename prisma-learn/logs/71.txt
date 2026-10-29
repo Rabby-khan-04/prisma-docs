@@ -1,0 +1,26 @@
+ban: { banned: true }
+order blocked: customer is banned
+internal record: {
+  id: 'cus_globex_dave',
+  bannedAt: 2026-10-28T05:51:52.584Z,
+  banReason: 'Card testing pattern detected'
+}
+public profile: { id: 'cus_globex_dave', status: 'restricted' }
+public profile leaks no reason/date: true
+unban: { banned: false }
+audit trail:
+[
+  {
+    action: 'BAN',
+    reason: 'Card testing pattern detected',
+    actorId: 'usr_globex_admin',
+    createdAt: 2026-10-28T05:51:52.636Z
+  },
+  {
+    action: 'UNBAN',
+    reason: 'False positive after manual review',
+    actorId: 'usr_globex_admin',
+    createdAt: 2026-10-28T05:51:52.669Z
+  }
+]
+cleanup done

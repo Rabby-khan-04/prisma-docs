@@ -1,0 +1,22 @@
+┌─────────┬───────────────┬────────────────────────────┬─────────────┐
+│ (index) │ column_name   │ data_type                  │ is_nullable │
+├─────────┼───────────────┼────────────────────────────┼─────────────┤
+│ 0       │ 'id'          │ 'character varying'        │ 'NO'        │
+│ 1       │ 'tenant_id'   │ 'character varying'        │ 'NO'        │
+│ 2       │ 'category_id' │ 'character varying'        │ 'YES'       │
+│ 3       │ 'sku'         │ 'character varying'        │ 'NO'        │
+│ 4       │ 'slug'        │ 'character varying'        │ 'NO'        │
+│ 5       │ 'name'        │ 'character varying'        │ 'NO'        │
+│ 6       │ 'description' │ 'text'                     │ 'YES'       │
+│ 7       │ 'price_cents' │ 'integer'                  │ 'NO'        │
+│ 8       │ 'stock'       │ 'integer'                  │ 'NO'        │
+│ 9       │ 'active'      │ 'boolean'                  │ 'NO'        │
+│ 10      │ 'rating'      │ 'numeric'                  │ 'YES'       │
+│ 11      │ 'view_count'  │ 'bigint'                   │ 'NO'        │
+│ 12      │ 'metadata'    │ 'jsonb'                    │ 'YES'       │
+│ 13      │ 'deleted_at'  │ 'timestamp with time zone' │ 'YES'       │
+│ 14      │ 'created_at'  │ 'timestamp with time zone' │ 'NO'        │
+│ 15      │ 'updated_at'  │ 'timestamp with time zone' │ 'NO'        │
+└─────────┴───────────────┴────────────────────────────┴─────────────┘
+Prisma names: { priceCents: 129900, createdAt: 2026-10-28T05:39:02.222Z }
+SQL names: price_cents, created_at

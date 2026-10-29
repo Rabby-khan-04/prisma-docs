@@ -1,0 +1,20 @@
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."orders"."id" FROM "public"."orders" WHERE "public"."orders"."tenant_id" = $1 OFFSET $2) AS "sub" -- params=["ten_acme","0"]
+count: 2
+prisma:query SELECT SUM("total_cents") AS "_sum$total_cents", SUM("discount_cents") AS "_sum$discount_cents", AVG("total_cents") AS "_avg$total_cents", MIN("total_cents") AS "_min$total_cents", MAX("total_cents") AS "_max$total_cents" FROM (SELECT "public"."orders"."total_cents", "public"."orders"."discount_cents" FROM "public"."orders" WHERE "public"."orders"."tenant_id" = $1 OFFSET $2) AS "sub" -- params=["ten_acme","0"]
+aggregate: {
+  _sum: { totalCents: 154600, discountCents: 10000 },
+  _avg: { totalCents: 77300 },
+  _min: { totalCents: 24900 },
+  _max: { totalCents: 129700 }
+}
+prisma:query SELECT COUNT(*) AS "_count$_all", SUM("public"."orders"."total_cents") AS "_sum$total_cents", "public"."orders"."status"::text FROM "public"."orders" WHERE "public"."orders"."tenant_id" = $1 GROUP BY "public"."orders"."status" ORDER BY "public"."orders"."status" ASC OFFSET $2 -- params=["ten_acme","0"]
+groupBy status: [
+  { _count: { _all: 1 }, _sum: { totalCents: 129700 }, status: 'PAID' },
+  {
+    _count: { _all: 1 },
+    _sum: { totalCents: 24900 },
+    status: 'FULFILLED'
+  }
+]
+prisma:query SELECT SUM("public"."orders"."total_cents") AS "_sum$total_cents", "public"."orders"."customer_id" FROM "public"."orders" WHERE "public"."orders"."tenant_id" = $1 GROUP BY "public"."orders"."customer_id" HAVING SUM("public"."orders"."total_cents") > $2 OFFSET $3 -- params=["ten_acme",50000,"0"]
+having sum > 50000: [ { _sum: { totalCents: 129700 }, customerId: 'cus_acme_alice' } ]

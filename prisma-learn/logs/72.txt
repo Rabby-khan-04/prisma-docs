@@ -1,0 +1,27 @@
+page 1, page size 2
+[
+  {
+    id: 'cus_acme_bob',
+    name: 'Bob Brown',
+    email: 'bob@acme.test',
+    loyaltyPoints: 10,
+    orderCount: 1,
+    lifetimeCents: 24900,
+    lastOrderAt: '2026-10-28T05:51:48.053Z'
+  },
+  {
+    id: 'cus_acme_alice',
+    name: 'Alice Anderson',
+    email: 'alice@acme.test',
+    loyaltyPoints: 120,
+    orderCount: 1,
+    lifetimeCents: 129700,
+    lastOrderAt: '2026-10-28T05:51:48.029Z'
+  }
+]
+SELECT queries used: 2 (1 customers + 1 groupBy)
+top customers by lifetime value: [
+  { customer_id: 'cus_acme_alice', lifetime_cents: 129700n },
+  { customer_id: 'cus_acme_bob', lifetime_cents: 24900n }
+]
+total customers in tenant: 2

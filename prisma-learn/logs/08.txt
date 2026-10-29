@@ -1,0 +1,14 @@
+prisma:query INSERT INTO "public"."customers" ("id","tenant_id","email","name","loyalty_points","tier","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "public"."customers"."id", "public"."customers"."tenant_id", "public"."customers"."email" -- params=["cus_ch08_acme","ten_acme","shared@example.test","Acme Shared","0","BRONZE","2026-10-28T05:39:08.521Z","2026-10-28T05:39:08.521Z"]
+acme created: {
+  id: 'cus_ch08_acme',
+  tenantId: 'ten_acme',
+  email: 'shared@example.test'
+}
+prisma:query INSERT INTO "public"."customers" ("id","tenant_id","email","name","loyalty_points","tier","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "public"."customers"."id", "public"."customers"."tenant_id", "public"."customers"."email" -- params=["cus_ch08_globex","ten_globex","shared@example.test","Globex Shared","0","BRONZE","2026-10-28T05:39:08.548Z","2026-10-28T05:39:08.548Z"]
+globex created: {
+  id: 'cus_ch08_globex',
+  tenantId: 'ten_globex',
+  email: 'shared@example.test'
+}
+duplicate rejected: P2002 {"driverAdapterError":{"name":"DriverAdapterError","cause":{"originalCode":"23505","originalMessage":"duplicate key value violates unique constraint \"customers_tenant_id_email_key\"","kind":"UniqueConstraintViolation","constraint":{"index":"customers_tenant_id_email_key"},"table":"customers"}},"modelName":"Customer"}
+prisma:query DELETE FROM "public"."customers" WHERE "public"."customers"."id" IN ($1,$2) -- params=["cus_ch08_acme","cus_ch08_globex"]

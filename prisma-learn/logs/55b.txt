@@ -1,0 +1,56 @@
+--- ⚠️ nested relation write: implicit M2M crosses tenants ---
+Acme article now has a Globex label: {
+  tenantId: 'ten_acme',
+  title: 'Trail season is here',
+  labels: [
+    { tenantId: 'ten_acme', name: 'Outdoors' },
+    { tenantId: 'ten_globex', name: 'Mobile' }
+  ]
+}
+--- ⚠️ groupBy without tenantId ---
+global grouping: [
+  {
+    _count: { _all: 1 },
+    _sum: { totalCents: 129700 },
+    tenantId: 'ten_acme',
+    status: 'PAID'
+  },
+  {
+    _count: { _all: 1 },
+    _sum: { totalCents: 24900 },
+    tenantId: 'ten_acme',
+    status: 'FULFILLED'
+  },
+  {
+    _count: { _all: 1 },
+    _sum: { totalCents: 119900 },
+    tenantId: 'ten_globex',
+    status: 'PENDING'
+  },
+  {
+    _count: { _all: 1 },
+    _sum: { totalCents: 93800 },
+    tenantId: 'ten_globex',
+    status: 'PAID'
+  }
+]
+--- ⚠️ aggregate without tenantId ---
+global order totals (both tenants): { _sum: { totalCents: 368300 }, _count: { _all: 4 } }
+--- ⚠️ raw SQL bypasses the tenant extension ---
+raw rows through acme extension: [
+  { tenant_id: 'ten_acme', total: 2n },
+  { tenant_id: 'ten_globex', total: 2n }
+]
+--- ⚠️ create trusts tenantId from the request body ---
+Acme session created a row in Globex: {
+  before: 3,
+  after: 4,
+  product: {
+    id: 'cmvrp1sp10000bcohkgnaf5s8',
+    tenantId: 'ten_globex',
+    name: 'Spoofed Tenant Product'
+  }
+}
+--- after rollback: no cross-tenant write survived ---
+acme article labels: { labels: [ { tenantId: 'ten_acme', name: 'Outdoors' } ] }
+globex product count: 3

@@ -1,0 +1,12 @@
+P2002 -> {
+  status: 409,
+  body: { error: 'A record with this value already exists', code: 'P2002' }
+}
+P2025 -> { status: 404, body: { error: 'Record not found', code: 'P2025' } }
+P2003 -> {
+  status: 400,
+  body: { error: 'Related record does not exist', code: 'P2003' }
+}
+P2034 on attempt 1, retrying
+serializable results: [ 'fulfilled', 'fulfilled' ]
+slow query 89.695201 ms SELECT count(*)::int AS ok FROM (SELECT pg_sleep(0.08)) AS sleep

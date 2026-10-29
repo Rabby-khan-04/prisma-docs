@@ -1,0 +1,26 @@
+prisma:query SELECT "public"."tenants"."id", "public"."tenants"."slug" FROM "public"."tenants" WHERE ("public"."tenants"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["ten_acme","1","0"]
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents", "public"."products"."tenant_id" FROM "public"."products" WHERE "public"."products"."tenant_id" = $1 ORDER BY "public"."products"."price_cents" DESC OFFSET $2 -- params=["ten_acme","0"]
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", "public"."customers"."tenant_id" FROM "public"."customers" WHERE "public"."customers"."tenant_id" = $1 OFFSET $2 -- params=["ten_acme","0"]
+prisma:query SELECT "public"."orders"."id", "public"."orders"."number", "public"."orders"."status"::text, "public"."orders"."total_cents", "public"."orders"."tenant_id", "public"."orders"."customer_id" FROM "public"."orders" WHERE ("public"."orders"."tenant_id" IN ($1,$2) AND "public"."orders"."customer_id" IN ($3,$4)) OFFSET $5 -- params=["ten_acme","ten_acme","cus_acme_alice","cus_acme_bob","0"]
+{
+  slug: 'acme',
+  products: [
+    { name: 'Trail Laptop 14', priceCents: 129900 },
+    { name: 'Camp Chair', priceCents: 24900 },
+    { name: 'Trail Mouse', priceCents: 4900 }
+  ],
+  customers: [
+    {
+      name: 'Alice Anderson',
+      orders: [ { number: 'ACME-1001', status: 'PAID', totalCents: 129700 } ]
+    },
+    {
+      name: 'Bob Brown',
+      orders: [
+        { number: 'ACME-1002', status: 'FULFILLED', totalCents: 24900 }
+      ]
+    }
+  ]
+}
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", COALESCE("aggr_selection_0_Order"."_aggr_count_orders", 0) AS "_aggr_count_orders" FROM "public"."customers" LEFT JOIN (SELECT "public"."orders"."tenant_id", "public"."orders"."customer_id", COUNT(*) AS "_aggr_count_orders" FROM "public"."orders" WHERE 1=1 GROUP BY "public"."orders"."tenant_id", "public"."orders"."customer_id") AS "aggr_selection_0_Order" ON ("public"."customers"."tenant_id" = "aggr_selection_0_Order"."tenant_id" AND "public"."customers"."id" = "aggr_selection_0_Order"."customer_id") WHERE ("public"."customers"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3 -- params=["cus_acme_alice","1","0"]
+alice order count: { name: 'Alice Anderson', _count: { orders: 1 } }

@@ -1,0 +1,13 @@
+products.metadata type: jsonb
+laptop metadata: { color: 'green', warrantyMonths: 24 }
+metadata.color = green: [
+  {
+    name: 'Trail Laptop 14',
+    metadata: { color: 'green', warrantyMonths: 24 }
+  }
+]
+warrantyMonths >= 12: [ { name: 'Trail Laptop 14' } ]
+updated metadata: { color: 'graphite', wireless: true }
+raw JSON key existence: [ { name: 'Trail Mouse', color: 'graphite' } ]
+valid metadata: { color: 'red', warrantyMonths: 12 }
+invalid metadata rejected by app: warrantyMonths must be an integer

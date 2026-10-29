@@ -1,0 +1,11 @@
+created: { id: 'prd_ch49_soft', slug: 'ch49-soft', deletedAt: null }
+⚠️ without deletedAt filter: [
+  {
+    id: 'prd_ch49_soft',
+    name: 'Soft Deleted Product',
+    deletedAt: 2026-10-28T05:46:43.914Z
+  }
+]
+✅ with deletedAt: null: []
+re-create with same slug: P2002
+restored: { id: 'prd_ch49_soft', deletedAt: null, active: true }

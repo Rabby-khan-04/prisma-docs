@@ -1,0 +1,6 @@
+each query sleeps 150ms
+{ poolMax: 2, concurrency: 6, elapsedMs: 551 }
+{ poolMax: 6, concurrency: 6, elapsedMs: 181 }
+{ poolMax: 1, concurrency: 4, elapsedMs: 615 }
+server limits: { max_connections: '100', superuser_reserved: '3' }
+example: 4 instances * 10 connections + 5 reserved = 45 < 100

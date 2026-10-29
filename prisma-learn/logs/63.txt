@@ -1,0 +1,28 @@
+full row bytes: 1111
+narrow row bytes: 197
+same row count: 3 3
+full rows    164 ms / 200 runs
+narrow rows  106 ms / 200 runs
+--- contains (%trail%) ---
+Seq Scan on products  (cost=0.00..16.00 rows=1 width=30) (actual time=0.067..0.071 rows=2 loops=1)
+  Filter: (((name)::text ~~* '%trail%'::text) AND ((tenant_id)::text = 'ten_acme'::text))
+  Rows Removed by Filter: 4
+  Buffers: shared hit=1
+Planning Time: 0.047 ms
+Execution Time: 0.078 ms
+--- startsWith (Trail%) ---
+Seq Scan on products  (cost=0.00..16.00 rows=40 width=30) (actual time=0.007..0.008 rows=2 loops=1)
+  Filter: (((name)::text ~~ 'Trail%'::text) AND ((tenant_id)::text = 'ten_acme'::text))
+  Rows Removed by Filter: 4
+  Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=14
+Planning Time: 0.121 ms
+Execution Time: 0.017 ms
+product indexes:
+- CREATE UNIQUE INDEX products_pkey ON public.products USING btree (id)
+- CREATE INDEX products_tenant_id_active_created_at_idx ON public.products USING btree (tenant_id, active, created_at)
+- CREATE INDEX products_tenant_id_category_id_idx ON public.products USING btree (tenant_id, category_id)
+- CREATE UNIQUE INDEX products_tenant_id_id_key ON public.products USING btree (tenant_id, id)
+- CREATE UNIQUE INDEX products_tenant_id_sku_key ON public.products USING btree (tenant_id, sku)
+- CREATE UNIQUE INDEX products_tenant_id_slug_key ON public.products USING btree (tenant_id, slug)

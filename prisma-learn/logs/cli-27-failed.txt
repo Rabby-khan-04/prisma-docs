@@ -1,0 +1,22 @@
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+Datasource "db": PostgreSQL database "prisma_learn", schema "public" at "localhost:5433"
+
+7 migrations found in prisma/migrations
+
+Applying migration `20261028054200_failed_demo`
+Error: P3018
+
+A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20261028054200_failed_demo
+
+Database error code: 22012
+
+Database error:
+ERROR: division by zero
+
+DbError { severity: "ERROR", parsed_severity: Some(Error), code: SqlState(E22012), message: "division by zero", detail: None, hint: None, position: None, where_: None, schema: None, table: None, column: None, datatype: None, constraint: None, file: Some("int.c"), line: Some(870), routine: Some("int4div") }
+
+

@@ -1,0 +1,26 @@
+PASS prisma CLI pinned 7.10.1
+PASS @prisma/client matches 
+PASS adapter pinned 
+PASS database is prisma_learn 
+PASS PostgreSQL 17 PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu
+PASS all migrations applied 8
+PASS table tenants 
+PASS table users 
+PASS table customers 
+PASS table orders 
+PASS table order_items 
+PASS table payments 
+PASS table coupons 
+PASS table loyalty_ledger 
+PASS table fraud_events 
+PASS tenant ten_acme has fixture data { customers: 2, products: 3, orders: 2 }
+PASS tenant ten_globex has fixture data { customers: 2, products: 3, orders: 2 }
+PASS RLS enabled on 3 tables [
+  { tablename: 'customers', rowsecurity: true },
+  { tablename: 'orders', rowsecurity: true },
+  { tablename: 'products', rowsecurity: true }
+]
+PASS RLS policies installed 3
+PASS rls_app role exists without BYPASSRLS 
+
+20 checks passed. The course environment is complete.

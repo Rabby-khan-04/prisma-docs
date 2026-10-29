@@ -1,0 +1,10 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."slug" = $2) LIMIT $3 OFFSET $4 -- params=["ten_acme","trail-laptop","1","0"]
+Prisma result: { id: 'prd_acme_laptop', name: 'Trail Laptop 14', priceCents: 129900 }
+prisma:query SELECT id, name, price_cents FROM products WHERE tenant_id = $1 AND slug = $2 -- params=["ten_acme","trail-laptop"]
+Raw result: [
+  {
+    id: 'prd_acme_laptop',
+    name: 'Trail Laptop 14',
+    price_cents: 129900
+  }
+]

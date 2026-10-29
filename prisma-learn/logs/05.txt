@@ -1,0 +1,2 @@
+acme Acme Outdoors PRO { customers: 2, products: 3, orders: 2 }
+globex Globex Electronics FREE { customers: 2, products: 3, orders: 2 }

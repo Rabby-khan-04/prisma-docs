@@ -1,0 +1,18 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."tenant_id" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND EXISTS(SELECT "t0"."tenant_id", "t0"."product_id" FROM "public"."product_tags" AS "t0" LEFT JOIN "public"."tags" AS "j1" ON ("j1"."tenant_id","j1"."id") = ("t0"."tenant_id","t0"."tag_id") WHERE ("j1"."slug" = $2 AND ("j1"."id" IS NOT NULL) AND ("public"."products"."tenant_id","public"."products"."id") = ("t0"."tenant_id","t0"."product_id") AND "t0"."tenant_id" IS NOT NULL AND "t0"."product_id" IS NOT NULL))) OFFSET $3 -- params=["ten_acme","sale","0"]
+prisma:query SELECT "public"."product_tags"."tenant_id", "public"."product_tags"."product_id", "public"."product_tags"."tag_id" FROM "public"."product_tags" WHERE ("public"."product_tags"."tenant_id" IN ($1,$2) AND "public"."product_tags"."product_id" IN ($3,$4)) OFFSET $5 -- params=["ten_acme","ten_acme","prd_acme_laptop","prd_acme_mouse","0"]
+prisma:query SELECT "public"."tags"."id", "public"."tags"."slug", "public"."tags"."tenant_id" FROM "public"."tags" WHERE ("public"."tags"."id" IN ($1,$2,$3) AND "public"."tags"."tenant_id" IN ($4,$5,$6)) OFFSET $7 -- params=["tag_acme_new","tag_acme_sale","tag_acme_sale","ten_acme","ten_acme","ten_acme","0"]
+some sale tag: [
+  { name: 'Trail Laptop 14', tags: [ [Object], [Object] ] },
+  { name: 'Trail Mouse', tags: [ [Object] ] }
+]
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND NOT EXISTS(SELECT "t0"."tenant_id", "t0"."product_id" FROM "public"."order_items" AS "t0" WHERE ((NOT "t0"."quantity" >= $2) AND ("public"."products"."tenant_id","public"."products"."id") = ("t0"."tenant_id","t0"."product_id") AND "t0"."tenant_id" IS NOT NULL AND "t0"."product_id" IS NOT NULL))) OFFSET $3 -- params=["ten_acme",1,"0"]
+every item quantity >= 1: [
+  { name: 'Camp Chair' },
+  { name: 'Trail Laptop 14' },
+  { name: 'Trail Mouse' },
+  { name: 'Bulk A' },
+  { name: 'Bulk B' },
+  { name: 'Bulk C' }
+]
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name" FROM "public"."customers" WHERE ("public"."customers"."tenant_id" = $1 AND NOT EXISTS(SELECT "t0"."tenant_id", "t0"."customer_id" FROM "public"."orders" AS "t0" WHERE (1=1 AND ("public"."customers"."tenant_id","public"."customers"."id") = ("t0"."tenant_id","t0"."customer_id") AND "t0"."tenant_id" IS NOT NULL AND "t0"."customer_id" IS NOT NULL))) OFFSET $2 -- params=["ten_acme","0"]
+customers with no orders: []

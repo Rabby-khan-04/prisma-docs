@@ -1,0 +1,15 @@
+prisma:query UPDATE "public"."products" SET "price_cents" = $1, "updated_at" = $2 WHERE (("public"."products"."tenant_id" = $3 AND "public"."products"."id" = $4) AND 1=1) RETURNING "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" -- params=[5100,"2026-10-28T05:43:07.312Z","ten_acme","prd_acme_mouse"]
+prisma:query INSERT INTO "public"."coupons" ("id","tenant_id","code","type","amount_off_cents","min_order_cents","redemption_count","active","created_at","updated_at") VALUES ($1,$2,$3,CAST($4::text AS "public"."CouponType"),$5,$6,$7,$8,$9,$10) RETURNING "public"."coupons"."id", "public"."coupons"."code", "public"."coupons"."amount_off_cents" -- params=["cpn_ch41","ten_acme","CH41","FIXED",500,"0","0",true,"2026-10-28T05:43:07.318Z","2026-10-28T05:43:07.318Z"]
+prisma:query COMMIT -- params=[]
+batch committed: [
+  { name: 'Trail Mouse', priceCents: 5100 },
+  { code: 'CH41', amountOffCents: 500 }
+]
+prisma:query UPDATE "public"."products" SET "price_cents" = $1, "updated_at" = $2 WHERE (("public"."products"."tenant_id" = $3 AND "public"."products"."id" = $4) AND 1=1) RETURNING "public"."products"."id", "public"."products"."tenant_id", "public"."products"."category_id", "public"."products"."sku", "public"."products"."slug", "public"."products"."name", "public"."products"."description", "public"."products"."price_cents", "public"."products"."stock", "public"."products"."active", "public"."products"."rating", "public"."products"."view_count", "public"."products"."metadata", "public"."products"."deleted_at", "public"."products"."created_at", "public"."products"."updated_at" -- params=[4900,"2026-10-28T05:43:07.325Z","ten_acme","prd_acme_mouse"]
+prisma:query DELETE FROM "public"."coupons" WHERE ("public"."coupons"."id" = $1 AND 1=1) RETURNING "public"."coupons"."id", "public"."coupons"."tenant_id", "public"."coupons"."code", "public"."coupons"."type"::text, "public"."coupons"."percent_off", "public"."coupons"."amount_off_cents", "public"."coupons"."min_order_cents", "public"."coupons"."max_redemptions", "public"."coupons"."redemption_count", "public"."coupons"."active", "public"."coupons"."expires_at", "public"."coupons"."created_at", "public"."coupons"."updated_at" -- params=["cpn_ch41"]
+prisma:query INSERT INTO "public"."coupons" ("id","tenant_id","code","type","percent_off","min_order_cents","redemption_count","active","created_at","updated_at") VALUES ($1,$2,$3,CAST($4::text AS "public"."CouponType"),$5,$6,$7,$8,$9,$10) RETURNING "public"."coupons"."id", "public"."coupons"."code" -- params=["cpn_ch41_rollback","ten_acme","CH41R","PERCENT",5,"0","0",true,"2026-10-28T05:43:07.333Z","2026-10-28T05:43:07.333Z"]
+inside transaction: { id: 'cpn_ch41_rollback', code: 'CH41R' }
+prisma:query ROLLBACK -- params=[]
+interactive transaction rolled back
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."coupons"."id" FROM "public"."coupons" WHERE "public"."coupons"."id" = $1 OFFSET $2) AS "sub" -- params=["cpn_ch41_rollback","0"]
+row after rollback: 0

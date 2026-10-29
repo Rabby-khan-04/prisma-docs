@@ -1,0 +1,21 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" FROM "public"."products" WHERE "public"."products"."tenant_id" = $1 ORDER BY "public"."products"."price_cents" DESC, "public"."products"."id" ASC OFFSET $2 -- params=["ten_acme","0"]
+price desc: [
+  { name: 'Trail Laptop 14', priceCents: 129900 },
+  { name: 'Camp Chair', priceCents: 24900 },
+  { name: 'Trail Mouse', priceCents: 4900 },
+  { name: 'Bulk C', priceCents: 3000 },
+  { name: 'Bulk B', priceCents: 2000 },
+  { name: 'Bulk A', priceCents: 1000 }
+]
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE "public"."products"."tenant_id" = $1 ORDER BY "public"."products"."name" ASC OFFSET $2 -- params=["ten_globex","0"]
+name asc: [
+  { name: 'Globex Work Laptop' },
+  { name: 'Orbit Headset' },
+  { name: 'Orbit Phone' }
+]
+prisma:query SELECT "public"."orders"."id", "public"."orders"."number", "public"."orders"."tenant_id", "public"."orders"."customer_id" FROM "public"."orders" LEFT JOIN "public"."customers" AS "orderby_1" ON ("orderby_1"."tenant_id","orderby_1"."id") = ("public"."orders"."tenant_id","public"."orders"."customer_id") WHERE "public"."orders"."tenant_id" = $1 ORDER BY "orderby_1"."name" ASC OFFSET $2 -- params=["ten_acme","0"]
+prisma:query SELECT "public"."customers"."id", "public"."customers"."name", "public"."customers"."tenant_id" FROM "public"."customers" WHERE ("public"."customers"."id" IN ($1,$2) AND "public"."customers"."tenant_id" IN ($3,$4)) OFFSET $5 -- params=["cus_acme_alice","cus_acme_bob","ten_acme","ten_acme","0"]
+order by customer name: [
+  { number: 'ACME-1001', customer: { name: 'Alice Anderson' } },
+  { number: 'ACME-1002', customer: { name: 'Bob Brown' } }
+]

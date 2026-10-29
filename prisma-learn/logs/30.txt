@@ -1,0 +1,12 @@
+prisma:query INSERT INTO "public"."products" ("id","tenant_id","sku","slug","name","price_cents","stock","active","view_count","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" -- params=["prd_ch30_demo","ten_acme","CH30-DEMO","ch30-demo","Chapter 30 Demo",1999,3,true,"0","2026-10-28T05:42:04.074Z","2026-10-28T05:42:04.074Z"]
+create: { id: 'prd_ch30_demo', name: 'Chapter 30 Demo', priceCents: 1999 }
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE (("public"."products"."tenant_id" = $1 AND "public"."products"."id" = $2) AND 1=1) LIMIT $3 OFFSET $4 -- params=["ten_acme","prd_ch30_demo","1","0"]
+findUnique (tenant + id): { id: 'prd_ch30_demo', name: 'Chapter 30 Demo' }
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."active" = $2) ORDER BY "public"."products"."price_cents" DESC LIMIT $3 OFFSET $4 -- params=["ten_acme",true,"1","0"]
+findFirst: { name: 'Trail Laptop 14', priceCents: 129900 }
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."price_cents" >= $2) ORDER BY "public"."products"."price_cents" ASC LIMIT $3 OFFSET $4 -- params=["ten_acme",10000,"3","0"]
+findMany: [
+  { name: 'Camp Chair', priceCents: 24900 },
+  { name: 'Trail Laptop 14', priceCents: 129900 }
+]
+prisma:query DELETE FROM "public"."products" WHERE (("public"."products"."tenant_id" = $1 AND "public"."products"."id" = $2) AND 1=1) RETURNING "public"."products"."id", "public"."products"."tenant_id", "public"."products"."category_id", "public"."products"."sku", "public"."products"."slug", "public"."products"."name", "public"."products"."description", "public"."products"."price_cents", "public"."products"."stock", "public"."products"."active", "public"."products"."rating", "public"."products"."view_count", "public"."products"."metadata", "public"."products"."deleted_at", "public"."products"."created_at", "public"."products"."updated_at" -- params=["ten_acme","prd_ch30_demo"]

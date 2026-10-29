@@ -1,0 +1,8 @@
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."products"."id" FROM "public"."products" WHERE "public"."products"."tenant_id" = $1 OFFSET $2) AS "sub" -- params=["ten_acme","0"]
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."products"."id" FROM "public"."products" WHERE "public"."products"."tenant_id" = $1 OFFSET $2) AS "sub" -- params=["ten_acme","0"]
+count twice: 3 3
+prisma:query 
+  SELECT count(*)::bigint AS count FROM products WHERE tenant_id = $1
+ -- params=["ten_acme"]
+raw count type: bigint 3
+database still enforces UNIQUE: P2002

@@ -1,0 +1,21 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."tenant_id", "public"."products"."slug", "public"."products"."name" FROM "public"."products" WHERE "public"."products"."slug" = $1 ORDER BY "public"."products"."tenant_id" ASC OFFSET $2 -- params=["trail-laptop","0"]
+same slug, two tenants: [
+  {
+    id: 'prd_acme_laptop',
+    tenantId: 'ten_acme',
+    slug: 'trail-laptop',
+    name: 'Trail Laptop 14'
+  },
+  {
+    id: 'prd_globex_laptop',
+    tenantId: 'ten_globex',
+    slug: 'trail-laptop',
+    name: 'Globex Work Laptop'
+  }
+]
+duplicate slug in one tenant: P2002
+cross-tenant FK rejected: P2010
+
+Invalid `prisma.$executeRaw()` invocation:
+
+

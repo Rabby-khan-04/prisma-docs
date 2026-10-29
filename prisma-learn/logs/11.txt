@@ -1,0 +1,20 @@
+┌─────────┬───────────────┬────────────────────────────┬───────────────┬──────────────────────────┬───────────────────┬───────────────┐
+│ (index) │ column_name   │ data_type                  │ udt_name      │ character_maximum_length │ numeric_precision │ numeric_scale │
+├─────────┼───────────────┼────────────────────────────┼───────────────┼──────────────────────────┼───────────────────┼───────────────┤
+│ 0       │ 'id'          │ 'character varying'        │ 'varchar'     │ 30                       │ null              │ null          │
+│ 1       │ 'tenant_id'   │ 'character varying'        │ 'varchar'     │ 30                       │ null              │ null          │
+│ 2       │ 'category_id' │ 'character varying'        │ 'varchar'     │ 30                       │ null              │ null          │
+│ 3       │ 'sku'         │ 'character varying'        │ 'varchar'     │ 40                       │ null              │ null          │
+│ 4       │ 'slug'        │ 'character varying'        │ 'varchar'     │ 80                       │ null              │ null          │
+│ 5       │ 'name'        │ 'character varying'        │ 'varchar'     │ 200                      │ null              │ null          │
+│ 6       │ 'description' │ 'text'                     │ 'text'        │ null                     │ null              │ null          │
+│ 7       │ 'price_cents' │ 'integer'                  │ 'int4'        │ null                     │ 32                │ 0             │
+│ 8       │ 'stock'       │ 'integer'                  │ 'int4'        │ null                     │ 32                │ 0             │
+│ 9       │ 'active'      │ 'boolean'                  │ 'bool'        │ null                     │ null              │ null          │
+│ 10      │ 'rating'      │ 'numeric'                  │ 'numeric'     │ null                     │ 3                 │ 2             │
+│ 11      │ 'view_count'  │ 'bigint'                   │ 'int8'        │ null                     │ 64                │ 0             │
+│ 12      │ 'metadata'    │ 'jsonb'                    │ 'jsonb'       │ null                     │ null              │ null          │
+│ 13      │ 'deleted_at'  │ 'timestamp with time zone' │ 'timestamptz' │ null                     │ null              │ null          │
+│ 14      │ 'created_at'  │ 'timestamp with time zone' │ 'timestamptz' │ null                     │ null              │ null          │
+│ 15      │ 'updated_at'  │ 'timestamp with time zone' │ 'timestamptz' │ null                     │ null              │ null          │
+└─────────┴───────────────┴────────────────────────────┴───────────────┴──────────────────────────┴───────────────────┴───────────────┘

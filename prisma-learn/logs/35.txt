@@ -1,0 +1,79 @@
+prisma:query SELECT "public"."users"."id", "public"."users"."tenant_id", "public"."users"."email", "public"."users"."password_hash", "public"."users"."role"::text, "public"."users"."created_at", "public"."users"."updated_at" FROM "public"."users" WHERE ("public"."users"."tenant_id" = $1 AND "public"."users"."email" = $2) LIMIT $3 OFFSET $4 -- params=["ten_acme","owner@acme.test","1","0"]
+⚠️ full user contains passwordHash: {
+  id: 'usr_acme_owner',
+  tenantId: 'ten_acme',
+  email: 'owner@acme.test',
+  passwordHash: 'fake-hash-not-a-real-password',
+  role: 'OWNER',
+  createdAt: 2026-10-28T05:42:03.142Z,
+  updatedAt: 2026-10-28T05:42:03.142Z
+}
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."role"::text FROM "public"."users" WHERE ("public"."users"."tenant_id" = $1 AND "public"."users"."email" = $2) LIMIT $3 OFFSET $4 -- params=["ten_acme","owner@acme.test","1","0"]
+safe select: { id: 'usr_acme_owner', email: 'owner@acme.test', role: 'OWNER' }
+prisma:query SELECT "public"."users"."id", "public"."users"."tenant_id", "public"."users"."email", "public"."users"."role"::text, "public"."users"."created_at", "public"."users"."updated_at" FROM "public"."users" WHERE ("public"."users"."tenant_id" = $1 AND "public"."users"."email" = $2) LIMIT $3 OFFSET $4 -- params=["ten_acme","owner@acme.test","1","0"]
+omit passwordHash: {
+  id: 'usr_acme_owner',
+  tenantId: 'ten_acme',
+  email: 'owner@acme.test',
+  role: 'OWNER',
+  createdAt: 2026-10-28T05:42:03.142Z,
+  updatedAt: 2026-10-28T05:42:03.142Z
+}
+prisma:query SELECT "public"."orders"."id", "public"."orders"."tenant_id", "public"."orders"."customer_id", "public"."orders"."number", "public"."orders"."status"::text, "public"."orders"."subtotal_cents", "public"."orders"."discount_cents", "public"."orders"."total_cents", "public"."orders"."currency", "public"."orders"."idempotency_key", "public"."orders"."metadata", "public"."orders"."placed_at", "public"."orders"."created_at", "public"."orders"."updated_at" FROM "public"."orders" WHERE (("public"."orders"."tenant_id" = $1 AND "public"."orders"."id" = $2) AND 1=1) LIMIT $3 OFFSET $4 -- params=["ten_acme","ord_acme_1001","1","0"]
+prisma:query SELECT "public"."order_items"."id", "public"."order_items"."tenant_id", "public"."order_items"."order_id", "public"."order_items"."product_id", "public"."order_items"."product_name", "public"."order_items"."sku", "public"."order_items"."unit_price_cents", "public"."order_items"."quantity", "public"."order_items"."line_total_cents", "public"."order_items"."created_at" FROM "public"."order_items" WHERE ("public"."order_items"."tenant_id" = $1 AND "public"."order_items"."order_id" = $2) OFFSET $3 -- params=["ten_acme","ord_acme_1001","0"]
+prisma:query SELECT "public"."payments"."id", "public"."payments"."tenant_id", "public"."payments"."order_id", "public"."payments"."provider", "public"."payments"."provider_ref", "public"."payments"."amount_cents", "public"."payments"."status"::text, "public"."payments"."created_at", "public"."payments"."updated_at" FROM "public"."payments" WHERE ("public"."payments"."tenant_id" = $1 AND "public"."payments"."order_id" = $2) OFFSET $3 -- params=["ten_acme","ord_acme_1001","0"]
+include returns whole related rows: {
+  id: 'ord_acme_1001',
+  tenantId: 'ten_acme',
+  customerId: 'cus_acme_alice',
+  number: 'ACME-1001',
+  status: 'PAID',
+  subtotalCents: 139700,
+  discountCents: 10000,
+  totalCents: 129700,
+  currency: 'USD',
+  idempotencyKey: 'seed-acme-1001',
+  metadata: null,
+  placedAt: 2026-10-28T05:42:03.285Z,
+  createdAt: 2026-10-28T05:42:03.285Z,
+  updatedAt: 2026-10-28T05:42:03.285Z,
+  items: [
+    {
+      id: 'oit_acme_1001_1',
+      tenantId: 'ten_acme',
+      orderId: 'ord_acme_1001',
+      productId: 'prd_acme_laptop',
+      productName: 'Trail Laptop 14',
+      sku: 'ACME-LAP-01',
+      unitPriceCents: 129900,
+      quantity: 1,
+      lineTotalCents: 129900,
+      createdAt: 2026-10-28T05:42:03.290Z
+    },
+    {
+      id: 'oit_acme_1001_2',
+      tenantId: 'ten_acme',
+      orderId: 'ord_acme_1001',
+      productId: 'prd_acme_mouse',
+      productName: 'Trail Mouse',
+      sku: 'ACME-MOU-01',
+      unitPriceCents: 4900,
+      quantity: 2,
+      lineTotalCents: 9800,
+      createdAt: 2026-10-28T05:42:03.295Z
+    }
+  ],
+  payments: [
+    {
+      id: 'pay_acme_1001',
+      tenantId: 'ten_acme',
+      orderId: 'ord_acme_1001',
+      provider: 'stripe',
+      providerRef: 'pi_seed_acme_1001',
+      amountCents: 129700,
+      status: 'SUCCEEDED',
+      createdAt: 2026-10-28T05:42:03.301Z,
+      updatedAt: 2026-10-28T05:42:03.301Z
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+rating type: Decimal2 value: 4.7
+viewCount typeof: bigint value: 152
+--- JSON serialization problems ---
+JSON.stringify BigInt throws: Do not know how to serialize a BigInt
+with replacer: {"name":"Trail Laptop 14","rating":"4.7","viewCount":"152","priceCents":129900}
+--- exact decimal arithmetic ---
+toFixed(2): 4.70
+times 2: 9.4
+plus 0.05: 4.75
+greater than 4.5: true
+price as decimal: 1299.00
+--- BigInt beyond Number.MAX_SAFE_INTEGER ---
+bigint: 9007199254740993
+as Number loses precision: 9007199254740992
+MAX_SAFE_INTEGER: 9007199254740991
+viewCount after atomic increment: 153
+raw SUM(payments.amount_cents) type: Decimal2 value: 154600

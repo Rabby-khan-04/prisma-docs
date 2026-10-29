@@ -1,0 +1,22 @@
+prisma:query 
+  SELECT id, tenant_id, name FROM products WHERE tenant_id = $1
+ -- params=["ten_acme"]
+safe rows: 3 [ 'ten_acme', 'ten_acme', 'ten_acme' ]
+prisma:query SELECT id, tenant_id, name FROM products WHERE tenant_id = '' OR 1=1 --' -- params=[]
+⚠️ unsafe rows: 6 [
+  'ten_acme',
+  'ten_acme',
+  'ten_globex',
+  'ten_globex',
+  'ten_globex',
+  'ten_acme'
+]
+prisma:query SELECT name FROM products WHERE tenant_id = $1 ORDER BY name ASC LIMIT 2 -- params=["ten_acme"]
+Prisma.sql: [ { name: 'Camp Chair' }, { name: 'Trail Laptop 14' } ]
+prisma:query 
+  UPDATE products SET stock = stock + 1 WHERE tenant_id = $1 AND id = $2
+ -- params=["ten_acme","prd_acme_mouse"]
+prisma:query 
+  UPDATE products SET stock = stock - 1 WHERE tenant_id = $1 AND id = $2
+ -- params=["ten_acme","prd_acme_mouse"]
+parameterized write reverted

@@ -1,0 +1,26 @@
+prisma:query SELECT "public"."products"."id", "public"."products"."sku", "public"."products"."name" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."sku" IN ($2,$3)) OFFSET $4 -- params=["ten_acme","ACME-LAP-01","ACME-MOU-01","0"]
+in: [
+  { sku: 'ACME-LAP-01', name: 'Trail Laptop 14' },
+  { sku: 'ACME-MOU-01', name: 'Trail Mouse' }
+]
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price_cents" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."price_cents" >= $2 AND "public"."products"."price_cents" < $3) OFFSET $4 -- params=["ten_acme",4900,100000,"0"]
+range: [
+  { name: 'Camp Chair', priceCents: 24900 },
+  { name: 'Trail Mouse', priceCents: 4900 }
+]
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."name" ILIKE ('%' || $2 || '%')) OFFSET $3 -- params=["ten_acme","trail","0"]
+contains insensitive: [ { name: 'Trail Laptop 14' }, { name: 'Trail Mouse' } ]
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."stock", "public"."products"."price_cents" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND ("public"."products"."stock" = $2 OR "public"."products"."price_cents" < $3)) OFFSET $4 -- params=["ten_acme",0,5000,"0"]
+OR: [
+  { name: 'Trail Mouse', stock: 40, priceCents: 4900 },
+  { name: 'Bulk A', stock: 0, priceCents: 1000 },
+  { name: 'Bulk B', stock: 0, priceCents: 2000 },
+  { name: 'Bulk C', stock: 0, priceCents: 3000 }
+]
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."description" FROM "public"."products" WHERE ("public"."products"."tenant_id" = $1 AND "public"."products"."description" IS NULL) OFFSET $2 -- params=["ten_acme","0"]
+null description: [
+  { name: 'Trail Mouse', description: null },
+  { name: 'Bulk A', description: null },
+  { name: 'Bulk B', description: null },
+  { name: 'Bulk C', description: null }
+]

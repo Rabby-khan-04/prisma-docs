@@ -1,0 +1,34 @@
+{
+  "name": "prisma-learn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Beginner-to-advanced Prisma 7 learning project on a local throwaway PostgreSQL database",
+  "type": "module",
+  "scripts": {
+    "db:check": "node scripts/preflight.mjs",
+    "db:generate": "npm run db:check && prisma generate",
+    "db:migrate": "npm run db:check && prisma migrate dev",
+    "db:deploy": "npm run db:check && prisma migrate deploy",
+    "db:status": "npm run db:check && prisma migrate status",
+    "db:push": "npm run db:check && prisma db push",
+    "db:studio": "npm run db:check && prisma studio",
+    "db:seed": "npm run db:check && prisma db seed",
+    "setup:check": "npm run db:check && tsx src/00-setup-check.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "dotenv": "17.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/pg": "8.15.6",
+    "prisma": "7.10.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

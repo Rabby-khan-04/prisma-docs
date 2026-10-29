@@ -1,0 +1,34 @@
+⚠️ full user row: {
+  id: 'usr_acme_owner',
+  tenantId: 'ten_acme',
+  email: 'owner@acme.test',
+  passwordHash: 'fake-hash-not-a-real-password',
+  role: 'OWNER',
+  createdAt: 2026-10-28T05:49:32.077Z,
+  updatedAt: 2026-10-28T05:49:32.077Z
+}
+⚠️ JSON sent by accident: {"id":"usr_acme_owner","tenantId":"ten_acme","email":"owner@acme.test","passwordHash":"fake-hash-not-a-real-password","role":"OWNER","createdAt":"2026-10-28T05:49:32.077Z","updatedAt":"2026-10-28T05:49:32.077Z"}
+✅ public user: {
+  id: 'usr_acme_owner',
+  email: 'owner@acme.test',
+  role: 'OWNER',
+  createdAt: '2026-10-28T05:49:32.077Z'
+}
+⚠️ full customer row has notes/banReason: { notes: null, banReason: null, bannedAt: null }
+✅ customer summary: {
+  id: 'cus_acme_bob',
+  name: 'Bob Brown',
+  email: 'bob@acme.test',
+  tier: 'BRONZE',
+  loyaltyPoints: 10
+}
+✅ product DTO: {
+  id: 'prd_acme_laptop',
+  name: 'Trail Laptop 14',
+  price: { cents: 129900, currency: 'USD', formatted: '$1299.00' },
+  rating: '4.70',
+  viewCount: '152',
+  createdAt: '2026-10-28T05:49:32.119Z'
+}
+✅ DTO JSON: {"id":"prd_acme_laptop","name":"Trail Laptop 14","price":{"cents":129900,"currency":"USD","formatted":"$1299.00"},"rating":"4.70","viewCount":"152","createdAt":"2026-10-28T05:49:32.119Z"}
+raw row cannot be JSON-serialized: Do not know how to serialize a BigInt

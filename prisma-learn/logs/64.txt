@@ -1,0 +1,23 @@
+deep include queries: 5 customers: 2 payload bytes: 3767
+paged include queries: 3 payload: [ { name: 'Alice Anderson', orders: [ [Object] ] } ]
+--- join plan ---
+Hash Right Join  (cost=15.62..32.26 rows=150 width=34) (actual time=0.050..0.056 rows=2 loops=1)
+  Hash Cond: ((o.customer_id)::text = (c.id)::text)
+  Buffers: shared hit=2
+  ->  Seq Scan on orders o  (cost=0.00..16.00 rows=240 width=44) (actual time=0.003..0.004 rows=2 loops=1)
+        Filter: ((tenant_id)::text = 'ten_acme'::text)
+        Rows Removed by Filter: 2
+        Buffers: shared hit=1
+  ->  Hash  (cost=13.75..13.75 rows=150 width=25) (actual time=0.015..0.015 rows=2 loops=1)
+        Buckets: 1024  Batches: 1  Memory Usage: 9kB
+        Buffers: shared hit=1
+        ->  Seq Scan on customers c  (cost=0.00..13.75 rows=150 width=25) (actual time=0.009..0.010 rows=2 loops=1)
+              Filter: ((tenant_id)::text = 'ten_acme'::text)
+              Rows Removed by Filter: 2
+              Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=74
+Planning Time: 0.481 ms
+Execution Time: 0.101 ms
+nested write created order: cmvrp4gy20000leohyvsqhdoo
+nested write queries (rolled back): 5

@@ -1,0 +1,28 @@
+┌─────────┬───────────────┬──────────────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (index) │ tablename     │ indexname                                    │ indexdef                                                                                                                   │
+├─────────┼───────────────┼──────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 0       │ 'order_items' │ 'order_items_pkey'                           │ 'CREATE UNIQUE INDEX order_items_pkey ON public.order_items USING btree (id)'                                              │
+│ 1       │ 'order_items' │ 'order_items_tenant_id_order_id_idx'         │ 'CREATE INDEX order_items_tenant_id_order_id_idx ON public.order_items USING btree (tenant_id, order_id)'                  │
+│ 2       │ 'order_items' │ 'order_items_tenant_id_product_id_idx'       │ 'CREATE INDEX order_items_tenant_id_product_id_idx ON public.order_items USING btree (tenant_id, product_id)'              │
+│ 3       │ 'orders'      │ 'orders_pkey'                                │ 'CREATE UNIQUE INDEX orders_pkey ON public.orders USING btree (id)'                                                        │
+│ 4       │ 'orders'      │ 'orders_tenant_id_customer_id_placed_at_idx' │ 'CREATE INDEX orders_tenant_id_customer_id_placed_at_idx ON public.orders USING btree (tenant_id, customer_id, placed_at)' │
+│ 5       │ 'orders'      │ 'orders_tenant_id_id_key'                    │ 'CREATE UNIQUE INDEX orders_tenant_id_id_key ON public.orders USING btree (tenant_id, id)'                                 │
+│ 6       │ 'orders'      │ 'orders_tenant_id_idempotency_key_key'       │ 'CREATE UNIQUE INDEX orders_tenant_id_idempotency_key_key ON public.orders USING btree (tenant_id, idempotency_key)'       │
+│ 7       │ 'orders'      │ 'orders_tenant_id_number_key'                │ 'CREATE UNIQUE INDEX orders_tenant_id_number_key ON public.orders USING btree (tenant_id, number)'                         │
+│ 8       │ 'orders'      │ 'orders_tenant_id_status_placed_at_idx'      │ 'CREATE INDEX orders_tenant_id_status_placed_at_idx ON public.orders USING btree (tenant_id, status, placed_at)'           │
+│ 9       │ 'products'    │ 'products_pkey'                              │ 'CREATE UNIQUE INDEX products_pkey ON public.products USING btree (id)'                                                    │
+│ 10      │ 'products'    │ 'products_tenant_id_active_created_at_idx'   │ 'CREATE INDEX products_tenant_id_active_created_at_idx ON public.products USING btree (tenant_id, active, created_at)'     │
+│ 11      │ 'products'    │ 'products_tenant_id_category_id_idx'         │ 'CREATE INDEX products_tenant_id_category_id_idx ON public.products USING btree (tenant_id, category_id)'                  │
+│ 12      │ 'products'    │ 'products_tenant_id_id_key'                  │ 'CREATE UNIQUE INDEX products_tenant_id_id_key ON public.products USING btree (tenant_id, id)'                             │
+│ 13      │ 'products'    │ 'products_tenant_id_sku_key'                 │ 'CREATE UNIQUE INDEX products_tenant_id_sku_key ON public.products USING btree (tenant_id, sku)'                           │
+│ 14      │ 'products'    │ 'products_tenant_id_slug_key'                │ 'CREATE UNIQUE INDEX products_tenant_id_slug_key ON public.products USING btree (tenant_id, slug)'                         │
+└─────────┴───────────────┴──────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Limit  (cost=0.14..8.16 rows=1 width=508) (actual time=0.015..0.017 rows=3 loops=1)
+  Buffers: shared hit=3
+  ->  Index Scan Backward using products_tenant_id_active_created_at_idx on products  (cost=0.14..8.16 rows=1 width=508) (actual time=0.015..0.016 rows=3 loops=1)
+        Index Cond: (((tenant_id)::text = 'ten_acme'::text) AND (active = true))
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=123
+Planning Time: 0.339 ms
+Execution Time: 0.030 ms

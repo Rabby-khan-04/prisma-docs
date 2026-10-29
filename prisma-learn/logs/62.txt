@@ -1,0 +1,15 @@
+before re-seed: { tenants: 2, customers: 4, products: 6, orders: 4, users: 2, tags: 3 }
+seed run 1: Seeded 2 tenants, 2 users, 4 customers, 5 categories, 6 products, 4 orders, 3 payments, 2 coupons.
+seed run 2: Seeded 2 tenants, 2 users, 4 customers, 5 categories, 6 products, 4 orders, 3 payments, 2 coupons.
+after re-seed:  { tenants: 2, customers: 4, products: 6, orders: 4, users: 2, tags: 3 }
+PASS seed is idempotent (same counts after two runs)
+PASS deterministic fixture id: { id: 'cus_acme_alice', tenantId: 'ten_acme' }
+PASS cross-tenant insert rejected and rolled back by PostgreSQL
+test row after rollback: 0
+PASS per-test transaction leaves no residue
+
+Test database strategy:
+- use a separate database (prisma_learn_test), same migrations via migrate deploy
+- seed with the same two-tenant fixture before the suite
+- never mock Prisma constraints; they are the behaviour under test
+- run tests serially or give each worker its own database/schema
